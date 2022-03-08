@@ -3,8 +3,6 @@ import config
 import json
 
 
-api = tweepy.API()
-
 def getClient():
     client = tweepy.Client(bearer_token=config.BEARER_TOKEN)
                            #consumer_key=config.API_KEY,
@@ -24,50 +22,23 @@ def searchTweets(query):  # soll eine funktion werden die die keywörter filtert
     tweet_data = tweets.data
     results=[]
 
-    if not tweet_data is None and len(tweet_data) > 0:
-        for tweet in  tweet_data:
+    for tweet in tweet_data:
+        if not tweet_data is None and len(tweet_data) > 0:
             obj={}
             obj['id'] = tweet.id
             obj['text'] = tweet.text
             results.append(obj)
 
-    else:
-        return []
-
+        else:
+            return []
     return results
 
 
 
-
+#---------- aufrufen der funktion die ein keyword dursucht
 tweets = searchTweets("Bitcoin")
 for x in tweets:
     if len(tweets) > 0:
         print(x)
     else:
         print("No matching tweets")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#def ():   #soll likes von posts und retweets raussuchen
-
-
-
-
-
-
-
-
-
