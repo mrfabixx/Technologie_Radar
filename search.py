@@ -1,36 +1,73 @@
 import tweepy
 import config
-
-client = tweepy.Client(bearer_token=config.Bearer_Token)
-
-client.get_liking_users(id=config.tweet_id)
-users = client.get_liking_users(id=config.tweet_id)   #wer hat diesen tweet gliked
-users_1 = client.get_retweeters(id=config.tweet_id)   #user die retweet haben
-
-response = client.get_tweet(id=config.tweet_id, tweet_fields=["created_at"])
-#for user in users_1.data:
- #   print(user.id)
-print(response)
-"""
-query = "covid -is:retweet"
-
-response = client.search_recent_tweets(query=query, max_results=100, tweet_fields=["created_at", "lang"], user_fields=["profile_image_url"], expansions=["geo.place_id"])
-print(response)
-
-users={u["id"]: u for  u in response.includes["users"]}
-
-for tweet in response.data:
-   if users [tweet.author_id]:
-        user= users[tweet.author_id]
-    print(tweet.id)
-    print(user.username)
-    print(user.profile_image_url)
-file_name="Tweet.txt"
-with open(file_name,"a+") as filehandler:
-    for tweet in tweepy.Paginator(client.search_recent_tweets, query=query, max_results=100).flatten(limit=1000):
-    #print(tweet.id)
-     filehandler.write("Xs\n" % tweet.id)
+import json
 
 
-#list of users that liked a tweet
-"""
+api = tweepy.API()
+
+def getClient():
+    client = tweepy.Client(bearer_token=config.BEARER_TOKEN)
+                           #consumer_key=config.API_KEY,
+                           #consumer_secret=config.API_KEY_SECRET,
+                           #acces_token=config.ACCESS_TOKEN,
+                           #acces_token_secret=config.ACCESS_TOKEN_SECRET)
+
+    return client
+
+def searchTweets(query):  # soll eine funktion werden die die keywörter filtert seu es in der haeadline oder im text oder hashtags
+    client = getClient()
+    #tweets = client.seach_recent_tweets(query=query,max_reuslts=10)
+
+    tweets = client.search_recent_tweets(query=query, tweet_fields=['context_annotations', 'created_at'],
+                                        media_fields=['preview_image_url'], expansions='attachments.media_keys',
+                                        max_results=10)
+    tweet_data = tweets.data
+    results=[]
+
+    if not tweet_data is None and len(tweet_data) > 0:
+        for tweet in  tweet_data:
+            obj={}
+            obj['id'] = tweet.id
+            obj['text'] = tweet.text
+            results.append(obj)
+
+    else:
+        return []
+
+    return results
+
+
+
+
+tweets = searchTweets("Bitcoin")
+for x in tweets:
+    if len(tweets) > 0:
+        print(x)
+    else:
+        print("No matching tweets")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#def ():   #soll likes von posts und retweets raussuchen
+
+
+
+
+
+
+
+
+
