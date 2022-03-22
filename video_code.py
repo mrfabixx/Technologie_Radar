@@ -20,7 +20,7 @@ def searchTweets(query):  # soll eine funktion werden die die keywörter filtert
 
     tweets = client.search_recent_tweets(query=query, tweet_fields=['context_annotations', 'created_at'],
                                         media_fields=['preview_image_url'], expansions='attachments.media_keys',
-                                        max_results=10)
+                                        max_results=30)
     tweet_data = tweets.data
     results = []
 
@@ -69,8 +69,7 @@ def get_polarity(text):
     return polarity
 
 
-
-tweets = searchTweets("bitcoin")
+tweets = searchTweets("WEB3")
 
 String_text = '##ll=='.join(tweets)
 String_text_1 = String_text.split('##ll==')
@@ -78,9 +77,16 @@ print(String_text_1)
 i = 1
 for element in String_text_1:
     cleaning_tweet = cleanText(element)
-    score = get_polarity(cleaning_tweet)
+    score_polarity = get_polarity(cleaning_tweet)
+    score_subjectivity = get_subjectivity(cleaning_tweet)
     print(str(i) + ') ' + cleaning_tweet )
-    print(score)
+    print("score_polarity: " + str(score_polarity) + "   -----   " + "score_subjectivity: " + str(score_subjectivity))
+    if score_polarity < 0:
+        print("Der Tweet ist negativ")
+    elif score_polarity > 0:
+        print("Der Tweet ist positiv")
+    elif score_polarity == 0:
+        print("Der Tweet ist neutral")
     print("\n")
     i += 1
 
