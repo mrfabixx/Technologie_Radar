@@ -16,11 +16,11 @@ def getClient():
 
 def searchTweets(query):  # soll eine funktion werden die die keywörter filtert seu es in der haeadline oder im text oder hashtags
     client = getClient()
-    #tweets = client.seach_recent_tweets(query=query,max_reuslts=10)
+    
 
     tweets = client.search_recent_tweets(query=query, tweet_fields=['context_annotations', 'created_at'],
                                         media_fields=['preview_image_url'], expansions='attachments.media_keys',
-                                        max_results=30)
+                                        max_results=10)
     tweet_data = tweets.data
     results = []
 
@@ -30,16 +30,8 @@ def searchTweets(query):  # soll eine funktion werden die die keywörter filtert
         else:
             return []
 
-            '''
-            obj={}
-            obj['id'] = tweet.id
-            #obj['username']=tweet.usernames
-            obj['text'] = tweet.text
-            results.append(obj)
 
-        else:
-            return []
-'''
+
     return results
 
 
@@ -69,7 +61,8 @@ def get_polarity(text):
     return polarity
 
 
-tweets = searchTweets("WEB3")
+#tweets = input("Enter the keyword you want to search for")
+tweets = searchTweets("bitcoin")
 
 String_text = '##ll=='.join(tweets)
 String_text_1 = String_text.split('##ll==')
