@@ -4,17 +4,77 @@ from tkinter import messagebox
 from matplotlib import pyplot as plt
 from idlelib.tooltip import Hovertip
 
-class Page(Frame):
+
+class App(Frame):
     def __init__(self, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
 
-    def show(self):
-        self.lift()
+        self.controller = 'Page1'
+        container = Frame(self, bg="#f6f7fb")
+        container.pack(side="right", fill="both", expand=True)
+
+        self.frames = {}
+        for F in (Page1, Page2, Page3, Page4):
+            page_name = F.__name__
+            frame = F(parent=container, controller=self)
+            self.frames[page_name] = frame
+            frame.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
+
+        self.show_frame("Page1")
+
+        buttonframe = Frame(self, bg="#0f65af")
+        buttonframe.pack(side="left", fill="both", expand=False)
+
+        # Icons
+        self.radar_btn = PhotoImage(file="icons/wradar.png")
+        self.databank_btn = PhotoImage(file="icons/wdatabank.png")
+        self.diagram_btn = PhotoImage(file="icons/wdiagram.png")
+        self.settings_btn = PhotoImage(file="icons/wsettings.png")
+
+        # Buttons for Pages
+        def start():
+            self.show_frame('Page1')
+
+        b1 = Button(buttonframe, image=self.radar_btn, bg="#0f65af",
+                    activebackground="#003055", command=start, relief='raised',
+                    borderwidth=0)
+
+        def data():
+            self.show_frame('Page2')
+
+        b2 = Button(buttonframe, image=self.databank_btn, bg="#0f65af",
+                    activebackground="#003055", command=data, relief='raised',
+                    borderwidth=0)
+
+        def result():
+            self.show_frame('Page3')
+
+        b3 = Button(buttonframe, image=self.diagram_btn, bg="#0f65af",
+                    activebackground="#003055", command=result, relief='raised',
+                    borderwidth=0)
+
+        def settings():
+            self.show_frame('Page4')
+
+        b4 = Button(buttonframe, image=self.settings_btn, bg="#0f65af",
+                    activebackground="#003055", command=settings, relief='raised',
+                    borderwidth=0)
+
+        b1.pack(side="top")
+        b2.pack(side="top")
+        b3.pack(side="top")
+        b4.pack(side="bottom")
+
+    def show_frame(self, page_name):
+        '''Show a frame for the given page name'''
+        frame = self.frames[page_name]
+        frame.tkraise()
 
 
-class Page1(Page):
-    def __init__(self, *args, **kwargs):
-        Page.__init__(self, *args, **kwargs)
+class Page1(Frame):
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent, bg='#f6f7fb')
+        self.controller = controller
 
         label = Label(self, text="Radar", bg="#f6f7fb")
         label.place(x=2, y=2)
@@ -31,7 +91,7 @@ class Page1(Page):
         def toggle():
             if start_button.config('text')[-1] == 'START':
                 start_button.config(text='STOP')
-                print("Start")
+
             else:
                 ab = messagebox.askquestion("Wirklich Abbrechen?", "Wollen Sie den Vorgang abbrechen?")
                 if ab == "yes":
@@ -54,7 +114,7 @@ class Page1(Page):
                               activebackground="#f6f7fb", borderwidth=0)
         twitter_btn = Button(self, image=self.twitter_icon, bg="#f6f7fb",
                              activebackground="#f6f7fb", borderwidth=0)
-        info_btn = Button(self, image=self.info_icon, bg="#f6f7fb",command=callback,
+        info_btn = Button(self, image=self.info_icon, bg="#f6f7fb", command=callback,
                           activebackground="#f6f7fb", borderwidth=0)
 
         # Hovertips
@@ -68,15 +128,15 @@ class Page1(Page):
                               borderwidth=0.5)
 
         # Timesetter
-        years = Spinbox(self, from_=0, to=999,width=10,justify=CENTER)
-        month = Spinbox(self,from_=0,to=12,width=10,justify=CENTER)
-        days = Spinbox(self,from_=0,to=31, width=10,justify=CENTER)
+        years = Spinbox(self, from_=0, to=999, width=10, justify=CENTER)
+        month = Spinbox(self, from_=0, to=12, width=10, justify=CENTER)
+        days = Spinbox(self, from_=0, to=31, width=10, justify=CENTER)
 
         years.place(relx=0.3, rely=0.6, anchor=NW)
         month.place(relx=0.4, rely=0.6, anchor=NW)
         days.place(relx=0.5, rely=0.6, anchor=NW)
 
-        msg = Label(self,text="Jahre        Monate        Tage",font=("Times", 12),bg="#f6f7fb")
+        msg = Label(self, text="Jahre        Monate        Tage", font=("Times", 12), bg="#f6f7fb")
         msg.place(relx=0.3, rely=0.65, relheight=0.1, relwidth=0.3, anchor=NW)
 
         # Placements
@@ -89,9 +149,11 @@ class Page1(Page):
         info_btn.place(relx=1, rely=0, anchor=NE)
 
 
-class Page2(Page):
-    def __init__(self, *args, **kwargs):
-        Page.__init__(self, *args, **kwargs)
+class Page2(Frame):
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent, bg='#f6f7fb')
+        self.controller = controller
+
         label = Label(self, text="Databank", bg="#f6f7fb")
 
         dataset = 0
@@ -102,9 +164,11 @@ class Page2(Page):
         label.place(x=2, y=2)
 
 
-class Page3(Page):
-    def __init__(self, *args, **kwargs):
-        Page.__init__(self, *args, **kwargs)
+class Page3(Frame):
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent, bg='#f6f7fb')
+        self.controller = controller
+
         label = Label(self, text="Diagram", bg="#f6f7fb")
 
         # x-axis values in a list
@@ -130,9 +194,10 @@ class Page3(Page):
         pie_icon.place(relx=0.2, rely=0.3, anchor=NW)
 
 
-class Page4(Page):
-    def __init__(self, *args, **kwargs):
-        Page.__init__(self, *args, **kwargs)
+class Page4(Frame):
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent, bg='#f6f7fb')
+        self.controller = controller
 
         # Language Settings
         def display_selected(choice):
@@ -175,60 +240,12 @@ class Page4(Page):
         logo.place(relx=1, rely=1, anchor=SE)
 
 
-# Menu System
-class MainView(Frame):
-    def __init__(self, *args, **kwargs):
-        Frame.__init__(self, *args, **kwargs)
-        p1 = Page1(self, bg="#f6f7fb")
-        p2 = Page2(self, bg="#f6f7fb")
-        p3 = Page3(self, bg="#f6f7fb")
-        p4 = Page4(self, bg="#f6f7fb")
-
-        buttonframe = Frame(self, bg="#0f65af")
-        container = Frame(self, bg="#f6f7fb")
-        buttonframe.pack(side="left", fill="y", expand=False)
-        container.pack(side="top", fill="both", expand=True)
-
-        p1.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
-        p2.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
-        p3.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
-        p4.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
-
-        # Icons
-        self.radar_btn = PhotoImage(file="icons/wradar.png")
-        self.databank_btn = PhotoImage(file="icons/wdatabank.png")
-        self.diagram_btn = PhotoImage(file="icons/wdiagram.png")
-        self.settings_btn = PhotoImage(file="icons/wsettings.png")
-
-        # Buttons for Pages
-        b1 = Button(buttonframe, image=self.radar_btn, bg="#0f65af",
-                    activebackground="#003055", command=p1.show,
-                    borderwidth=0)
-        b2 = Button(buttonframe, image=self.databank_btn, bg="#0f65af",
-                    activebackground="#003055", command=p2.show,
-                    borderwidth=0)
-        b3 = Button(buttonframe, image=self.diagram_btn, bg="#0f65af",
-                    activebackground="#003055", command=p3.show,
-                    borderwidth=0)
-        b4 = Button(buttonframe, image=self.settings_btn, bg="#0f65af",
-                    activebackground="#003055", command=p4.show,
-                    borderwidth=0)
-
-        b1.pack(side="top")
-        b2.pack(side="top")
-        b3.pack(side="top")
-        b4.pack(side="bottom")
-
-        p2.show()
-        p1.show()
-
-
 if __name__ == "__main__":
     root = Tk()
-    main = MainView(root)
+    main = App(root)
     main.pack(side="top", fill="both", expand=True)
     root.title('Technologie Radar')
-    root.iconbitmap('icons/radar.ico')
+    root.iconbitmap('icons/Logo.ico')
     root.wm_geometry('800x600')
     root.minsize(800, 600)
     # root.resizable(width=False, height=False)
