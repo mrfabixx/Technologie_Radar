@@ -1,4 +1,4 @@
-#!/user/bin/python
+#/user/bin/python
 from configparser import ConfigParser
 
 def config(filename='datenbankverbindung.ini', section = 'postgresql'):
