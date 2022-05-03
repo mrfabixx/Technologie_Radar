@@ -14,3 +14,4 @@ cur.execute("INSERT INTO Sentimentresults (orginaltweet, sentiment, subjectivity
 
 cur.close()
 conn.close()
+
