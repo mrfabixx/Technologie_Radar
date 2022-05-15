@@ -5,6 +5,9 @@ from matplotlib import pyplot as plt
 from idlelib.tooltip import Hovertip
 
 
+import Search_sentiment_analysis
+
+
 class App(Frame):
     def __init__(self, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
@@ -22,8 +25,8 @@ class App(Frame):
 
         self.show_frame("Page1")
 
-        buttonframe = Frame(self, bg="#0f65af")
-        buttonframe.pack(side="left", fill="both", expand=False)
+        button_frame = Frame(self, bg="#0f65af")
+        button_frame.pack(side="left", fill="both", expand=False)
 
         # Icons
         self.radar_btn = PhotoImage(file="icons/wradar.png")
@@ -35,28 +38,28 @@ class App(Frame):
         def start():
             self.show_frame('Page1')
 
-        b1 = Button(buttonframe, image=self.radar_btn, bg="#0f65af",
+        b1 = Button(button_frame, image=self.radar_btn, bg="#0f65af",
                     activebackground="#003055", command=start, relief='raised',
                     borderwidth=0)
 
         def data():
             self.show_frame('Page2')
 
-        b2 = Button(buttonframe, image=self.databank_btn, bg="#0f65af",
+        b2 = Button(button_frame, image=self.databank_btn, bg="#0f65af",
                     activebackground="#003055", command=data, relief='raised',
                     borderwidth=0)
 
         def result():
             self.show_frame('Page3')
 
-        b3 = Button(buttonframe, image=self.diagram_btn, bg="#0f65af",
+        b3 = Button(button_frame, image=self.diagram_btn, bg="#0f65af",
                     activebackground="#003055", command=result, relief='raised',
                     borderwidth=0)
 
         def settings():
             self.show_frame('Page4')
 
-        b4 = Button(buttonframe, image=self.settings_btn, bg="#0f65af",
+        b4 = Button(button_frame, image=self.settings_btn, bg="#0f65af",
                     activebackground="#003055", command=settings, relief='raised',
                     borderwidth=0)
 
@@ -80,22 +83,24 @@ class Page1(Frame):
         label.place(x=2, y=2)
 
         # Keywords
-        keywords = Entry(self)
+        keywords_entry = Entry(self)
 
-        def printKeywords():
-            kwords = keywords.get()
-            keywords_label = Label(self, text=f'Keywords: {kwords}', pady=1, anchor=W)
+        def printKeywords(take_keywords):
+            keywords_label = Label(self, text=f'Keywords: {take_keywords}', pady=1, bg="#f6f7fb", anchor=W)
             keywords_label.place(relx=0.2, rely=0.2, relwidth=0.5, anchor=NW)
 
         # Start Button toggle and Warning-Message
-        def toggle():
+        def start_toggle():
             if start_button.config('text')[-1] == 'START':
                 start_button.config(text='STOP')
+                printKeywords(keywords_entry.get())
+                Search_sentiment_analysis.printTweets(keywords_entry.get())
 
             else:
                 ab = messagebox.askquestion("Wirklich Abbrechen?", "Wollen Sie den Vorgang abbrechen?")
                 if ab == "yes":
                     start_button.config(text='START')
+                    printKeywords('')
 
         # Icons
         self.facebook_icon = PhotoImage(file="icons/facebook.png")
@@ -103,45 +108,56 @@ class Page1(Frame):
         self.twitter_icon = PhotoImage(file="icons/twitter.png")
         self.info_icon = PhotoImage(file="icons/info.png")
 
+        # selected Icons
+        self.bleach_facebook_icon = PhotoImage(file="icons/bleach_facebook.png")
+        self.bleach_linkedin_icon = PhotoImage(file="icons/bleach_linkedin.png")
+        self.bleach_twitter_icon = PhotoImage(file="icons/bleach_twitter.png")
+
         # Define a callback function for Link
         def callback():
             webbrowser.open_new_tab('https://de.wikipedia.org/wiki/Sentiment_Detection')
 
+        # Button select
+        select_smedia = StringVar()
+        select_smedia.set("facebook")
+
+        def select():
+            selected_media = select_smedia.get()
+            print(selected_media)
+
         # Buttons
-        facebook_btn = Button(self, image=self.facebook_icon, bg="#f6f7fb",
-                              activebackground="#f6f7fb", borderwidth=0)
-        linkedin_btn = Button(self, image=self.linkedin_icon, bg="#f6f7fb",
-                              activebackground="#f6f7fb", borderwidth=0)
-        twitter_btn = Button(self, image=self.twitter_icon, bg="#f6f7fb",
-                             activebackground="#f6f7fb", borderwidth=0)
+        facebook_btn = Radiobutton(self, image=self.bleach_facebook_icon, variable=select_smedia, value=1,
+                                   command=select, bg="#f6f7fb", selectimage=self.facebook_icon, selectcolor="#f6f7fb",
+                                   indicatoron=0, activebackground="#f6f7fb", borderwidth=0)
+        linkedin_btn = Radiobutton(self, image=self.bleach_linkedin_icon, variable=select_smedia, value=2,
+                                   command=select, bg="#f6f7fb", selectimage=self.linkedin_icon, selectcolor="#f6f7fb",
+                                   indicatoron=0, activebackground="#f6f7fb", borderwidth=0)
+        twitter_btn = Radiobutton(self, image=self.bleach_twitter_icon, variable=select_smedia, value=3,
+                                  command=select, bg="#f6f7fb", selectimage=self.twitter_icon, selectcolor="#f6f7fb",
+                                  indicatoron=0, activebackground="#f6f7fb", borderwidth=0)
         info_btn = Button(self, image=self.info_icon, bg="#f6f7fb", command=callback,
                           activebackground="#f6f7fb", borderwidth=0)
 
         # Hovertips
-        Hovertip(info_btn, 'Was ist Sentiment?')
+        Hovertip(info_btn, 'Was ist eine Sentiment Analyse?')
 
-        # Enter Keywords Button ###Christian
-        enter_button = Button(self, text="Enter", padx=10, pady=5, command=printKeywords, borderwidth=1)
+        # Enter Keywords Button
+        # enter_button = Button(self, text="Enter", padx=10, pady=5, command=printKeywords, borderwidth=1)
 
         # Start Button
-        start_button = Button(self, text="START", font=8, bg="#f9faff", command=toggle, activebackground='white',
+        start_button = Button(self, text="START", font=8, bg="#f9faff", command=start_toggle, activebackground='white',
                               borderwidth=0.5)
 
-        # Timesetter
-        years = Spinbox(self, from_=0, to=999, width=10, justify=CENTER)
-        month = Spinbox(self, from_=0, to=12, width=10, justify=CENTER)
-        days = Spinbox(self, from_=0, to=31, width=10, justify=CENTER)
+        # Number of posts in Spinbox
+        number_posts = Spinbox(self, from_=0, to=999999999, justify=CENTER)
+        number_posts.place(relx=0.3, rely=0.6, relwidth=0.3, anchor=NW)
 
-        years.place(relx=0.3, rely=0.6, anchor=NW)
-        month.place(relx=0.4, rely=0.6, anchor=NW)
-        days.place(relx=0.5, rely=0.6, anchor=NW)
-
-        msg = Label(self, text="Jahre        Monate        Tage", font=("Times", 12), bg="#f6f7fb")
+        msg = Label(self, text="Anzahl der Posts", font=("Times", 12), bg="#f6f7fb")
         msg.place(relx=0.3, rely=0.65, relheight=0.1, relwidth=0.3, anchor=NW)
 
         # Placements
-        keywords.place(relx=0.2, rely=0.1, relwidth=0.5, height=30, anchor=NW)
-        enter_button.place(relx=0.75, rely=0.1, anchor=N)
+        keywords_entry.place(relx=0.2, rely=0.1, relwidth=0.53, height=30, anchor=NW)
+        # enter_button.place(relx=0.75, rely=0.1, anchor=N)
         facebook_btn.place(relx=0.2, rely=0.3, height=100, anchor=NW)
         linkedin_btn.place(relx=0.4, rely=0.3, height=100, anchor=NW)
         twitter_btn.place(relx=0.6, rely=0.3, height=100, anchor=NW)
