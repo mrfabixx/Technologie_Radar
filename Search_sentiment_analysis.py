@@ -5,15 +5,28 @@ import re
 import matplotlib.pyplot as plt
 
 plt.style.use('fivethirtyeight')
+import psycopg2
+from database_connection_config import config
+
+# params_ = config()
+# conn = psycopg2.connect(**params_)
+# cur = conn.cursor()
+# conn.autocommit = True
+# params_ = config()
+
+
+def result_quantity(count):
+    count_quantity = count
+    return count_quantity
 
 
 # funktion, die keywörter filtert in der haeadline, im text oder hashtags
-def searchTweets(query):
+def searchTweets(query, count_quantity=None):
     client = tweepy.Client(bearer_token=config_token.BEARER_TOKEN)
 
     tweets_pack = client.search_recent_tweets(query=query, tweet_fields=['context_annotations', 'created_at'],
-                                         media_fields=['preview_image_url'], expansions='attachments.media_keys',
-                                         max_results=10)
+                                              media_fields=['preview_image_url'], expansions='attachments.media_keys',
+                                              max_results=count_quantity)
     tweet_data = tweets_pack.data
     results = []
 
@@ -30,6 +43,20 @@ emoji_pattern = re.compile("["
                            u"\U0001F300-\U0001F5FF"  # symbols & pictographs
                            u"\U0001F680-\U0001F6FF"  # transport & map symbols
                            u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                           u"\U00002500-\U00002BEF"  # chinese char
+                           u"\U00002702-\U000027B0"
+                           u"\U00002702-\U000027B0"
+                           u"\U000024C2-\U0001F251"
+                           u"\U0001f926-\U0001f937"
+                           u"\U00010000-\U0010ffff"
+                           u"\u2640-\u2642"
+                           u"\u2600-\u2B55"
+                           u"\u200d"
+                           u"\u23cf"
+                           u"\u23e9"
+                           u"\u231a"
+                           u"\ufe0f"  # dingbats
+                           u"\u3030"
                            "]+", flags=re.UNICODE)
 
 
@@ -52,7 +79,6 @@ def get_polarity(text):
     return polarity
 
 
-# tweets = input("Enter the keyword you want to search for")
 def printTweets(get_keyword):
     tweets = searchTweets(get_keyword)
 
@@ -60,13 +86,18 @@ def printTweets(get_keyword):
     String_text_1 = String_text.split('##ll==')
     print(String_text_1)
     i = 1
+
     for element in String_text_1:
         cleaning_tweet = cleanText(element)
         score_polarity = get_polarity(cleaning_tweet)
         score_subjectivity = get_subjectivity(cleaning_tweet)
+        # cur.execute("INSERT INTO Sentimentresults (orginaltweet, sentiment, subjectivity) "
+        #             "VALUES(%s, %s, %s)", (cleaning_tweet, score_polarity, score_subjectivity,))
+
         print(str(i) + ') ' + cleaning_tweet)
         print(
-            "score_polarity: " + str(score_polarity) + "   -----   " + "score_subjectivity: " + str(score_subjectivity))
+            "score_polarity: " + str(score_polarity) + "   -----   " + "score_subjectivity: "
+            + str(score_subjectivity))
         if score_polarity < 0:
             print("Der Tweet ist negativ")
         elif score_polarity > 0:
@@ -76,3 +107,6 @@ def printTweets(get_keyword):
         print("\n")
         i += 1
 
+
+# cur.close()
+# conn.close()

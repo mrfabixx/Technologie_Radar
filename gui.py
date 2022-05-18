@@ -1,9 +1,9 @@
 from tkinter import *
+from tkinter import ttk
 import webbrowser
 from tkinter import messagebox
 from matplotlib import pyplot as plt
-from idlelib.tooltip import Hovertip
-
+from tkinter import filedialog
 
 import Search_sentiment_analysis
 
@@ -12,18 +12,25 @@ class App(Frame):
     def __init__(self, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
 
-        self.controller = 'Page1'
+        # Label variables
+        self.search_label_var = StringVar()
+        self.hover_label_var = StringVar()
+        self.data_label_var = StringVar()
+        self.diagram_label_var = StringVar()
+        self.msg_label_var = StringVar()
+        self.question1_var = StringVar()
+        self.question2_var = StringVar()
+
+        '''Creating Pages'''
         container = Frame(self, bg="#f6f7fb")
         container.pack(side="right", fill="both", expand=True)
 
         self.frames = {}
-        for F in (Page1, Page2, Page3, Page4):
+        for F in (Page4, Page3, Page2, Page1):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
             frame.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
-
-        self.show_frame("Page1")
 
         button_frame = Frame(self, bg="#0f65af")
         button_frame.pack(side="left", fill="both", expand=False)
@@ -77,19 +84,23 @@ class App(Frame):
 class Page1(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, bg='#f6f7fb')
-        self.controller = controller
 
-        label = Label(self, text="Radar", bg="#f6f7fb")
-        label.place(x=2, y=2)
+        # label
+        controller.search_label_var.set("Suche")
+        label_search = Label(self, textvariable=controller.search_label_var, bg="#f6f7fb")
+        label_search.place(x=2, y=2)
 
         # Keywords
-        keywords_entry = Entry(self)
+        keywords_entry = ttk.Entry(self)
 
         def printKeywords(take_keywords):
             keywords_label = Label(self, text=f'Keywords: {take_keywords}', pady=1, bg="#f6f7fb", anchor=W)
             keywords_label.place(relx=0.2, rely=0.2, relwidth=0.5, anchor=NW)
 
         # Start Button toggle and Warning-Message
+        controller.question1_var.set("Wirklich Abbrechen?")
+        controller.question2_var.set("Wollen Sie den Vorgang abbrechen?")
+
         def start_toggle():
             if start_button.config('text')[-1] == 'START':
                 start_button.config(text='STOP')
@@ -97,7 +108,7 @@ class Page1(Frame):
                 Search_sentiment_analysis.printTweets(keywords_entry.get())
 
             else:
-                ab = messagebox.askquestion("Wirklich Abbrechen?", "Wollen Sie den Vorgang abbrechen?")
+                ab = messagebox.askquestion(controller.question1_var.get(), controller.question2_var.get())
                 if ab == "yes":
                     start_button.config(text='START')
                     printKeywords('')
@@ -135,57 +146,73 @@ class Page1(Frame):
         twitter_btn = Radiobutton(self, image=self.bleach_twitter_icon, variable=select_smedia, value=3,
                                   command=select, bg="#f6f7fb", selectimage=self.twitter_icon, selectcolor="#f6f7fb",
                                   indicatoron=0, activebackground="#f6f7fb", borderwidth=0)
+
+        # Info Button and hovertip
         info_btn = Button(self, image=self.info_icon, bg="#f6f7fb", command=callback,
                           activebackground="#f6f7fb", borderwidth=0)
 
-        # Hovertips
-        Hovertip(info_btn, 'Was ist eine Sentiment Analyse?')
+        # Hover-tip
+        controller.hover_label_var.set("Was ist eine Sentiment Analyse?")
 
-        # Enter Keywords Button
-        # enter_button = Button(self, text="Enter", padx=10, pady=5, command=printKeywords, borderwidth=1)
+        hover_label = Label(textvariable=controller.hover_label_var, bg="#ffffff", relief='raised')
+
+        # function to appear , when button on hover
+        def changeOnHover(button):
+            button.bind("<Enter>", func=lambda e: hover_label.place(relx=0.95, rely=0.01, anchor=NE))
+
+            # forget on leving widget
+            button.bind("<Leave>", func=lambda e: hover_label.place_forget())
+
+        changeOnHover(info_btn)
+
+        info_btn.place(relx=1, rely=0, anchor=NE)
 
         # Start Button
         start_button = Button(self, text="START", font=8, bg="#f9faff", command=start_toggle, activebackground='white',
                               borderwidth=0.5)
+        start_button.place(relx=0.3, rely=0.8, relheight=0.1, relwidth=0.3, anchor=NW)
+
+
+        def select_post_count(selected_quantity):
+            Search_sentiment_analysis.result_quantity(count=selected_quantity)
 
         # Number of posts in Spinbox
-        number_posts = Spinbox(self, from_=0, to=999999999, justify=CENTER)
+        number_posts = ttk.Spinbox(self, from_=10, to=100000, command=select_post_count, justify=CENTER)
         number_posts.place(relx=0.3, rely=0.6, relwidth=0.3, anchor=NW)
 
-        msg = Label(self, text="Anzahl der Posts", font=("Times", 12), bg="#f6f7fb")
+        controller.msg_label_var.set("Anzahl der Posts")
+        msg = Label(self, textvariable=controller.msg_label_var, font=("Times", 12), bg="#f6f7fb")
         msg.place(relx=0.3, rely=0.65, relheight=0.1, relwidth=0.3, anchor=NW)
 
         # Placements
         keywords_entry.place(relx=0.2, rely=0.1, relwidth=0.53, height=30, anchor=NW)
-        # enter_button.place(relx=0.75, rely=0.1, anchor=N)
         facebook_btn.place(relx=0.2, rely=0.3, height=100, anchor=NW)
         linkedin_btn.place(relx=0.4, rely=0.3, height=100, anchor=NW)
         twitter_btn.place(relx=0.6, rely=0.3, height=100, anchor=NW)
-        start_button.place(relx=0.3, rely=0.8, relheight=0.1, relwidth=0.3, anchor=NW)
-        info_btn.place(relx=1, rely=0, anchor=NE)
 
 
 class Page2(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, bg='#f6f7fb')
-        self.controller = controller
 
-        label = Label(self, text="Databank", bg="#f6f7fb")
-
-        dataset = 0
-        dataset_count = Label(self, text=f'Datensätze . . . . . . . . . . . . . . . . . . . .  {dataset}',
-                              bg="#f6f7fb", anchor=W)
-
-        dataset_count.place(relx=0.2, rely=0.1, relwidth=0.5, height=30, anchor=NW)
+        controller.data_label_var.set('Datenbank')
+        label = Label(self, textvariable=controller.data_label_var, bg="#f6f7fb")
         label.place(x=2, y=2)
+
+        # dataset = 0
+        # dataset_count = Label(self, text=f'Datensätze . . . . . . . . . . . . . . . . . . . .  {dataset}',
+        #                       bg="#f6f7fb", anchor=W)
+        #
+        # dataset_count.place(relx=0.2, rely=0.1, relwidth=0.5, height=30, anchor=NW)
 
 
 class Page3(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, bg='#f6f7fb')
-        self.controller = controller
 
-        label = Label(self, text="Diagram", bg="#f6f7fb")
+        controller.diagram_label_var.set('Diagramm')
+        label = Label(self, textvariable=controller.diagram_label_var, bg="#f6f7fb")
+        label.place(x=2, y=2)
 
         # x-axis values in a list
         x = [7, 2, 5]
@@ -199,7 +226,11 @@ class Page3(Frame):
 
         def export():
             plt.pie(x, labels=stimmen)
-            plt.savefig('Technologie-Radar.pdf')
+            # plt.savefig('Technologie-Radar.pdf')
+            file = filedialog.asksaveasfile(mode='w', defaultextension=".pdf",
+                                            filetypes=(("PDF file", "Technologie-Radar.pdf"), ("All Files", "*.*")))
+            if file:
+                plt.save(file)  # saves the image to the input file name.
 
         self.download_icon = PhotoImage(file="icons/download.png")
         download_icon = Button(self, image=self.download_icon, bg="#f6f7fb", command=export,
@@ -213,25 +244,62 @@ class Page3(Frame):
 class Page4(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, bg='#f6f7fb')
+
         self.controller = controller
 
-        # Language Settings
-        def display_selected(choice):
-            choice = variable.get()
-            if choice == "Deutsch":
-                print("Hallo!")
-            else:
-                print("hello")
+        # ll = Label(self, text="Sprache:", bg="#f6f7fb")
+
+        lang_label_var = StringVar()
+        lang_label_var.set('Sprache:')
+        label_lang = Label(self,
+                           textvariable=lang_label_var, bg="#f6f7fb")
+        label_lang.place(relx=0.1, rely=0.4)
+
+        # create a combobox
+        selected_lang = StringVar()
+        selected_lang.set('Deutsch')
+        languages = ttk.Combobox(self, textvariable=selected_lang)
+
+        # languages
+        languages['values'] = ['Deutsch', 'English']
+
+        # prevent typing a value
+        languages['state'] = 'readonly'
+
+        # place the Language-select widget
+        languages.place(relx=0.2, rely=0.4)
+
+        # bind the selected value changes
+        def language_change(event):
+            choice = selected_lang.get()
+            '''Languages'''
+            if choice == 'Deutsch':
+
+                lang_label_var.set('Sprache:')
+                controller.search_label_var.set('Suche')
+                controller.hover_label_var.set("Was ist eine Sentiment Analyse?")
+                controller.data_label_var.set('Datenbank')
+                controller.diagram_label_var.set('Diagramm')
+                controller.msg_label_var.set("Anzahl der Posts")
+                controller.question1_var.set("Wirklich Abbrechen?")
+                controller.question2_var.set("Wollen Sie den Vorgang abbrechen?")
+
+            elif choice == 'English':
+
+                lang_label_var.set('Language:')
+                controller.search_label_var.set('Search')
+                controller.hover_label_var.set("What is Sentiment Analysis?")
+                controller.data_label_var.set('Databank')
+                controller.diagram_label_var.set('Diagram')
+                controller.msg_label_var.set("Number of posts")
+                controller.question1_var.set("Warning!")
+                controller.question2_var.set("Do you want to abort the process?")
+
+        languages.bind('<<ComboboxSelected>>', language_change)
 
         # Define a callback function for Link
         def callback(url):
             webbrowser.open_new_tab(url)
-
-        # Dropdown Menu for Languages
-        languages = ['Deutsch', 'English']
-        variable = StringVar()
-        variable.set(languages[0])
-        dropdown = OptionMenu(self, variable, *languages, command=display_selected)
 
         self.logo_png = PhotoImage(file="icons/Logo.png")
 
@@ -241,7 +309,6 @@ class Page4(Frame):
         readmelink = Label(self, text="readme", bg="#f6f7fb",
                            font=('Helveticabold', 12), fg="blue", cursor="hand2")
         logo = Label(self, image=self.logo_png, bg="#f6f7fb")
-        ll = Label(self, text="Sprache:", bg="#f6f7fb")
         vt = Label(self, text="Technologie-Radar\nCopyright ⓒ 2022 \nVersion 1.0", bg="#f6f7fb")
 
         link.bind('<Button-1>', lambda e: callback("https://github.com/mrfabixx/Technologie_Radar"))
@@ -249,8 +316,6 @@ class Page4(Frame):
 
         # Placements
         vt.place(relx=0.1, rely=0.2)
-        dropdown.place(relx=0.2, rely=0.4)
-        ll.place(relx=0.1, rely=0.4)
         link.place(relx=0.1, rely=.55)
         readmelink.place(relx=0.1, rely=.6)
         logo.place(relx=1, rely=1, anchor=SE)
