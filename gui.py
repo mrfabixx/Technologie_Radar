@@ -2,8 +2,9 @@ from tkinter import *
 from tkinter import ttk
 import webbrowser
 from tkinter import messagebox
-from matplotlib import pyplot as plt
 from tkinter import filedialog
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
 
 import Search_sentiment_analysis
 
@@ -172,7 +173,6 @@ class Page1(Frame):
                               borderwidth=0.5)
         start_button.place(relx=0.3, rely=0.8, relheight=0.1, relwidth=0.3, anchor=NW)
 
-
         def select_post_count(selected_quantity):
             Search_sentiment_analysis.result_quantity(count=selected_quantity)
 
@@ -210,35 +210,48 @@ class Page3(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, bg='#f6f7fb')
 
+        # Label diagram
         controller.diagram_label_var.set('Diagramm')
         label = Label(self, textvariable=controller.diagram_label_var, bg="#f6f7fb")
         label.place(x=2, y=2)
 
-        # x-axis values in a list
-        x = [7, 2, 5]
+        def plot():
+            '''example diagram'''
 
-        # y-axis values in a list
-        stimmen = ['Positiv', 'Negativ', 'Neutral']
+            # x-axis values in a list
+            x = [7, 2, 5]
 
+            # y-axis values in a list
+            stimmen = ['Positiv', 'Negativ', 'Neutral']
+
+
+
+            fig = Figure(figsize=(5,5), facecolor='#f6f7fb')
+            a =fig.add_subplot(111)
+            a.pie(x, labels=stimmen)
+
+            # diagram displayed on canvas
+            canvas = FigureCanvasTkAgg(fig, master=self)
+            canvas.get_tk_widget().pack()
+            canvas.draw()
+
+        # Button for showing diagram
         self.pie_icon = PhotoImage(file="icons/diagram.png")
-        pie_icon = Button(self, image=self.pie_icon, bg="#f6f7fb", command=lambda: plt.show(),
+        pie_icon = Button(self, image=self.pie_icon, bg="#f6f7fb", command=plot,
                           activebackground="#f6f7fb")
 
+        pie_icon.place(relx=0, rely=0, anchor=NW)
+
         def export():
-            plt.pie(x, labels=stimmen)
-            # plt.savefig('Technologie-Radar.pdf')
             file = filedialog.asksaveasfile(mode='w', defaultextension=".pdf",
                                             filetypes=(("PDF file", "Technologie-Radar.pdf"), ("All Files", "*.*")))
             if file:
-                plt.save(file)  # saves the image to the input file name.
+                plt.save()  # saves the image to the input file name.
 
         self.download_icon = PhotoImage(file="icons/download.png")
         download_icon = Button(self, image=self.download_icon, bg="#f6f7fb", command=export,
                                activebackground="#f6f7fb", borderwidth=0.5)
-
-        label.place(x=2, y=2)
         download_icon.place(relx=0.95, rely=0.95, anchor=SE)
-        pie_icon.place(relx=0.2, rely=0.3, anchor=NW)
 
 
 class Page4(Frame):
