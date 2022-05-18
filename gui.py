@@ -107,6 +107,7 @@ class Page1(Frame):
                 start_button.config(text='STOP')
                 printKeywords(keywords_entry.get())
                 Search_sentiment_analysis.printTweets(keywords_entry.get())
+                Search_sentiment_analysis.result_quantity(number_posts.get())
 
             else:
                 ab = messagebox.askquestion(controller.question1_var.get(), controller.question2_var.get())
@@ -177,7 +178,7 @@ class Page1(Frame):
             Search_sentiment_analysis.result_quantity(count=selected_quantity)
 
         # Number of posts in Spinbox
-        number_posts = ttk.Spinbox(self, from_=10, to=100000, command=select_post_count, justify=CENTER)
+        number_posts = ttk.Entry(self, justify=CENTER)
         number_posts.place(relx=0.3, rely=0.6, relwidth=0.3, anchor=NW)
 
         controller.msg_label_var.set("Anzahl der Posts")
