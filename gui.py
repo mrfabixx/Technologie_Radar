@@ -275,7 +275,7 @@ class Page4(Frame):
         languages = ttk.Combobox(self, textvariable=selected_lang)
 
         # languages
-        languages['values'] = ['Deutsch', 'English']
+        languages['values'] = ['Deutsch', 'English', 'Česky']
 
         # prevent typing a value
         languages['state'] = 'readonly'
@@ -308,6 +308,17 @@ class Page4(Frame):
                 controller.msg_label_var.set("Number of posts")
                 controller.question1_var.set("Warning!")
                 controller.question2_var.set("Do you want to abort the process?")
+
+            elif choice == 'Česky':
+
+                lang_label_var.set('Jazyk:')
+                controller.search_label_var.set('Vyhledávání')
+                controller.hover_label_var.set("Co je to analýza sentimentu?")
+                controller.data_label_var.set('Datová banka')
+                controller.diagram_label_var.set('Diagram')
+                controller.msg_label_var.set("Počet příspěvků")
+                controller.question1_var.set("Varování!")
+                controller.question2_var.set("Chcete proces přerušit?")
 
         languages.bind('<<ComboboxSelected>>', language_change)
 
