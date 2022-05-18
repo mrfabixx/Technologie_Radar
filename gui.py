@@ -216,6 +216,7 @@ class Page3(Frame):
         label = Label(self, textvariable=controller.diagram_label_var, bg="#f6f7fb")
         label.place(x=2, y=2)
 
+        # plot function
         def plot():
             '''example diagram'''
 
@@ -225,10 +226,8 @@ class Page3(Frame):
             # y-axis values in a list
             stimmen = ['Positiv', 'Negativ', 'Neutral']
 
-
-
-            fig = Figure(figsize=(5,5), facecolor='#f6f7fb')
-            a =fig.add_subplot(111)
+            fig = Figure(figsize=(5, 5), facecolor='#f6f7fb')
+            a = fig.add_subplot(111)
             a.pie(x, labels=stimmen)
 
             # diagram displayed on canvas
@@ -243,11 +242,12 @@ class Page3(Frame):
 
         pie_icon.place(relx=0, rely=0, anchor=NW)
 
+        # export function
         def export():
             file = filedialog.asksaveasfile(mode='w', defaultextension=".pdf",
                                             filetypes=(("PDF file", "Technologie-Radar.pdf"), ("All Files", "*.*")))
             if file:
-                plt.save()  # saves the image to the input file name.
+                fig.save()  # saves the image to the input file name.
 
         self.download_icon = PhotoImage(file="icons/download.png")
         download_icon = Button(self, image=self.download_icon, bg="#f6f7fb", command=export,
@@ -260,8 +260,6 @@ class Page4(Frame):
         Frame.__init__(self, parent, bg='#f6f7fb')
 
         self.controller = controller
-
-        # ll = Label(self, text="Sprache:", bg="#f6f7fb")
 
         lang_label_var = StringVar()
         lang_label_var.set('Sprache:')
@@ -303,7 +301,7 @@ class Page4(Frame):
                 lang_label_var.set('Language:')
                 controller.search_label_var.set('Search')
                 controller.hover_label_var.set("What is Sentiment Analysis?")
-                controller.data_label_var.set('Databank')
+                controller.data_label_var.set('Database')
                 controller.diagram_label_var.set('Diagram')
                 controller.msg_label_var.set("Number of posts")
                 controller.question1_var.set("Warning!")
@@ -314,7 +312,7 @@ class Page4(Frame):
                 lang_label_var.set('Jazyk:')
                 controller.search_label_var.set('Vyhledávání')
                 controller.hover_label_var.set("Co je to analýza sentimentu?")
-                controller.data_label_var.set('Datová banka')
+                controller.data_label_var.set('Databáze')
                 controller.diagram_label_var.set('Diagram')
                 controller.msg_label_var.set("Počet příspěvků")
                 controller.question1_var.set("Varování!")
