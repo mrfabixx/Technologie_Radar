@@ -99,7 +99,7 @@ def printTweets(get_keyword):
             print("Der Tweet ist neutral")
             print("\n")
         i += 1
-
+    #cur.execute("Delete from sentimentresults")
 
     cur.close()
     conn.close()
