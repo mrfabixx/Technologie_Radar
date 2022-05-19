@@ -93,6 +93,7 @@ class Page1(Frame):
 
         # Keywords
         keywords_entry = ttk.Entry(self)
+        keywords_entry.place(relx=0.2, rely=0.1, relwidth=0.53, height=30, anchor=NW)
 
         def printKeywords(take_keywords):
             keywords_label = Label(self, text=f'Keywords: {take_keywords}', pady=1, bg="#f6f7fb", anchor=W)
@@ -106,14 +107,18 @@ class Page1(Frame):
             if start_button.config('text')[-1] == 'START':
                 start_button.config(text='STOP')
                 printKeywords(keywords_entry.get())
-                Search_sentiment_analysis.printTweets(keywords_entry.get())
-                Search_sentiment_analysis.result_quantity(number_posts.get())
+                Search_sentiment_analysis.printTweets(keywords_entry.get(), number_posts.get())
 
             else:
                 ab = messagebox.askquestion(controller.question1_var.get(), controller.question2_var.get())
                 if ab == "yes":
                     start_button.config(text='START')
-                    printKeywords('')
+                Search_sentiment_analysis.printTweets(None, None)
+
+        # Start Button
+        start_button = Button(self, text="START", font=8, bg="#f9faff", command=start_toggle, state=DISABLED, activebackground='white',
+                              borderwidth=0.5)
+        start_button.place(relx=0.3, rely=0.8, relheight=0.1, relwidth=0.3, anchor=NW)
 
         # Icons
         self.facebook_icon = PhotoImage(file="icons/facebook.png")
@@ -137,6 +142,11 @@ class Page1(Frame):
         def select():
             selected_media = select_smedia.get()
             print(selected_media)
+            if selected_media is None:
+                start_button['state'] = DISABLED
+            else:
+                start_button['state'] = NORMAL
+
 
         # Buttons
         facebook_btn = Radiobutton(self, image=self.bleach_facebook_icon, variable=select_smedia, value=1,
@@ -169,24 +179,19 @@ class Page1(Frame):
 
         info_btn.place(relx=1, rely=0, anchor=NE)
 
-        # Start Button
-        start_button = Button(self, text="START", font=8, bg="#f9faff", command=start_toggle, activebackground='white',
-                              borderwidth=0.5)
-        start_button.place(relx=0.3, rely=0.8, relheight=0.1, relwidth=0.3, anchor=NW)
-
         def select_post_count(selected_quantity):
             Search_sentiment_analysis.result_quantity(count=selected_quantity)
 
-        # Number of posts in Spinbox
+        # Number of posts in Entry
         number_posts = ttk.Entry(self, justify=CENTER)
         number_posts.place(relx=0.3, rely=0.6, relwidth=0.3, anchor=NW)
 
+        # Message Label post count
         controller.msg_label_var.set("Anzahl der Posts")
         msg = Label(self, textvariable=controller.msg_label_var, font=("Times", 12), bg="#f6f7fb")
         msg.place(relx=0.3, rely=0.65, relheight=0.1, relwidth=0.3, anchor=NW)
 
         # Placements
-        keywords_entry.place(relx=0.2, rely=0.1, relwidth=0.53, height=30, anchor=NW)
         facebook_btn.place(relx=0.2, rely=0.3, height=100, anchor=NW)
         linkedin_btn.place(relx=0.4, rely=0.3, height=100, anchor=NW)
         twitter_btn.place(relx=0.6, rely=0.3, height=100, anchor=NW)
@@ -199,6 +204,18 @@ class Page2(Frame):
         controller.data_label_var.set('Datenbank')
         label = Label(self, textvariable=controller.data_label_var, bg="#f6f7fb")
         label.place(x=2, y=2)
+
+        host = ttk.Entry(self)
+        database = ttk.Entry(self)
+        user = ttk.Entry(self)
+        password = ttk.Entry(self)
+        port = ttk.Entry(self)
+
+        host.pack()
+        database.pack()
+        user.pack()
+        password.pack()
+        port.pack()
 
         # dataset = 0
         # dataset_count = Label(self, text=f'Datensätze . . . . . . . . . . . . . . . . . . . .  {dataset}',
