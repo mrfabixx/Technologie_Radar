@@ -15,17 +15,13 @@ conn.autocommit = True
 params_ = config()
 
 
-def result_quantity(count):
-    count_quantity = count
-    return count_quantity
 
 
 # funktion, die keywörter filtert in der haeadline, im text oder hashtags
-def searchTweets(query,count_quantity=None):
-
+def searchTweets(query, get_quantity):
     client = tweepy.Client(bearer_token=config_keys.BEARER_TOKEN)
 
-    tweets_pack = client.search_recent_tweets(query=query, max_results=count_quantity)
+    tweets_pack = client.search_recent_tweets(query=query, max_results=get_quantity)
 
     tweet_data = tweets_pack.data
     results = []
@@ -69,14 +65,13 @@ def cleanText(text):
     return text
 
 
-
 def get_polarity(text):
     polarity = TextBlob(text).sentiment.polarity
     return polarity
 
 
-def printTweets(get_keyword):
-    tweets = searchTweets(get_keyword)
+def printTweets(get_keyword, get_quantity):
+    tweets = searchTweets(get_keyword, get_quantity)
 
     String_text = '##ll=='.join(tweets)
     String_text_1 = String_text.split('##ll==')
@@ -99,9 +94,7 @@ def printTweets(get_keyword):
             print("Der Tweet ist neutral")
             print("\n")
         i += 1
-    #cur.execute("Delete from sentimentresults")
+    # cur.execute("Delete from sentimentresults")
 
     cur.close()
     conn.close()
-
-
