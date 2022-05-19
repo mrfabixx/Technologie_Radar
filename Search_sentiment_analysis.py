@@ -71,30 +71,35 @@ def get_polarity(text):
 
 
 def printTweets(get_keyword, get_quantity):
-    tweets = searchTweets(get_keyword, get_quantity)
+    if get_keyword is None:
+        return
+    else:
+        tweets = searchTweets(get_keyword, get_quantity)
 
-    String_text = '##ll=='.join(tweets)
-    String_text_1 = String_text.split('##ll==')
+        String_text = '##ll=='.join(tweets)
+        String_text_1 = String_text.split('##ll==')
 
-    i = 1
-    for element in String_text_1:
-        cleaning_tweet = cleanText(element)
-        score_polarity = get_polarity(cleaning_tweet)
+        i = 1
+        for element in String_text_1:
+            cleaning_tweet = cleanText(element)
+            score_polarity = get_polarity(cleaning_tweet)
 
-        cur.execute("INSERT INTO Sentimentresults (orginaltweet,sentiment)"
-                    "VALUES(%s, %s)", (cleaning_tweet, score_polarity,))
+            cur.execute("INSERT INTO Sentimentresults (orginaltweet,sentiment)"
+                        "VALUES(%s, %s)", (cleaning_tweet, score_polarity,))
 
-        print(str(i) + ') ' + cleaning_tweet)
-        print("score_polarity: " + str(score_polarity))
-        if score_polarity < 0:
-            print("Der Tweet ist negativ")
-        elif score_polarity > 0:
-            print("Der Tweet ist positiv")
-        elif score_polarity == 0:
-            print("Der Tweet ist neutral")
-            print("\n")
-        i += 1
-    # cur.execute("Delete from sentimentresults")
+            print(str(i) + ') ' + cleaning_tweet)
+            print("score_polarity: " + str(score_polarity))
+            if score_polarity < 0:
+                print("Der Tweet ist negativ")
+            elif score_polarity > 0:
+                print("Der Tweet ist positiv")
+            elif score_polarity == 0:
+                print("Der Tweet ist neutral")
+                print("\n")
+            i += 1
+        # cur.execute("Delete from sentimentresults")
 
-    cur.close()
-    conn.close()
+        cur.close()
+        conn.close()
+
+
