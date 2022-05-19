@@ -1,6 +1,6 @@
 import tweepy
 from textblob import TextBlob
-import config_token
+import config_keys
 import re
 import matplotlib.pyplot as plt
 
@@ -8,11 +8,11 @@ plt.style.use('fivethirtyeight')
 import psycopg2
 from database_connection_config import config
 
-# params_ = config()
-# conn = psycopg2.connect(**params_)
-# cur = conn.cursor()
-# conn.autocommit = True
-# params_ = config()
+params_ = config()
+conn = psycopg2.connect(**params_)
+cur = conn.cursor()
+conn.autocommit = True
+params_ = config()
 
 
 def result_quantity(count):
@@ -21,12 +21,12 @@ def result_quantity(count):
 
 
 # funktion, die keywörter filtert in der haeadline, im text oder hashtags
-def searchTweets(query, count_quantity=None):
-    client = tweepy.Client(bearer_token=config_token.BEARER_TOKEN)
+def searchTweets(query,count_quantity=None):
 
-    tweets_pack = client.search_recent_tweets(query=query, tweet_fields=['context_annotations', 'created_at'],
-                                              media_fields=['preview_image_url'], expansions='attachments.media_keys',
-                                              max_results=count_quantity)
+    client = tweepy.Client(bearer_token=config_keys.BEARER_TOKEN)
+
+    tweets_pack = client.search_recent_tweets(query=query, max_results=count_quantity)
+
     tweet_data = tweets_pack.data
     results = []
 
@@ -69,10 +69,6 @@ def cleanText(text):
     return text
 
 
-def get_subjectivity(text):
-    subjectivity = TextBlob(text).sentiment.subjectivity
-    return subjectivity
-
 
 def get_polarity(text):
     polarity = TextBlob(text).sentiment.polarity
@@ -84,29 +80,28 @@ def printTweets(get_keyword):
 
     String_text = '##ll=='.join(tweets)
     String_text_1 = String_text.split('##ll==')
-    print(String_text_1)
-    i = 1
 
+    i = 1
     for element in String_text_1:
         cleaning_tweet = cleanText(element)
         score_polarity = get_polarity(cleaning_tweet)
-        score_subjectivity = get_subjectivity(cleaning_tweet)
-        # cur.execute("INSERT INTO Sentimentresults (orginaltweet, sentiment, subjectivity) "
-        #             "VALUES(%s, %s, %s)", (cleaning_tweet, score_polarity, score_subjectivity,))
+
+        cur.execute("INSERT INTO Sentimentresults (orginaltweet,sentiment)"
+                    "VALUES(%s, %s)", (cleaning_tweet, score_polarity,))
 
         print(str(i) + ') ' + cleaning_tweet)
-        print(
-            "score_polarity: " + str(score_polarity) + "   -----   " + "score_subjectivity: "
-            + str(score_subjectivity))
+        print("score_polarity: " + str(score_polarity))
         if score_polarity < 0:
             print("Der Tweet ist negativ")
         elif score_polarity > 0:
             print("Der Tweet ist positiv")
         elif score_polarity == 0:
             print("Der Tweet ist neutral")
-        print("\n")
+            print("\n")
         i += 1
+    #cur.execute("Delete from sentimentresults")
+
+    cur.close()
+    conn.close()
 
 
-# cur.close()
-# conn.close()
