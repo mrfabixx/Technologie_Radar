@@ -156,13 +156,13 @@ class Page1(Frame):
         # Buttons
         facebook_btn = Radiobutton(self, image=self.bleach_facebook_icon, variable=select_smedia, value=1,
                                    command=select, bg="#f6f7fb", selectimage=self.facebook_icon, selectcolor="#f6f7fb",
-                                   indicatoron=0, activebackground="#f6f7fb", borderwidth=0)
+                                   indicatoron=FALSE, activebackground="#f6f7fb", borderwidth=0)
         linkedin_btn = Radiobutton(self, image=self.bleach_linkedin_icon, variable=select_smedia, value=2,
                                    command=select, bg="#f6f7fb", selectimage=self.linkedin_icon, selectcolor="#f6f7fb",
-                                   indicatoron=0, activebackground="#f6f7fb", borderwidth=0)
+                                   indicatoron=FALSE, activebackground="#f6f7fb", borderwidth=0)
         twitter_btn = Radiobutton(self, image=self.bleach_twitter_icon, variable=select_smedia, value=3,
                                   command=select, bg="#f6f7fb", selectimage=self.twitter_icon, selectcolor="#f6f7fb",
-                                  indicatoron=0, activebackground="#f6f7fb", borderwidth=0)
+                                  indicatoron=FALSE, activebackground="#f6f7fb", borderwidth=0)
 
         # Info Button and hovertip
         info_btn = Button(self, image=self.info_icon, bg="#f6f7fb", command=callback,
@@ -181,11 +181,8 @@ class Page1(Frame):
             button.bind("<Leave>", func=lambda e: hover_label.place_forget())
 
         changeOnHover(info_btn)
-
         info_btn.place(relx=1, rely=0, anchor=NE)
 
-        def select_post_count(selected_quantity):
-            Search_sentiment_analysis.result_quantity(count=selected_quantity)
 
         # Number of posts in Entry
         number_posts = ttk.Entry(self, justify=CENTER)
@@ -210,9 +207,6 @@ class Page2(Frame):
         label = Label(self, textvariable=controller.data_label_var, bg="#f6f7fb")
         label.pack(pady=10, anchor='nw')
 
-        # ----
-        button_frame = Frame(self)
-        button_frame.pack(side=BOTTOM)
         # ============================================
 
         # ======--- text field -----======
@@ -261,16 +255,29 @@ class Page2(Frame):
         controller.delete_var.set('Löschen')
 
         # =====--------- Buttons -----------========
-        create_button = Button(button_frame, textvariable=controller.create_var, height=3, width=10, command=create)
+
+        # ---- button frame ----
+        button_frame = Frame(self)
+        button_frame.pack()
+        # ---- buttons ----
+        create_button = Button(button_frame, textvariable=controller.create_var,
+                               bg="white", height=3, width=10, command=create, bd=0,
+                               activebackground='#0f65af', activeforeground='white')
         create_button.grid(row=0, column=3, padx=2)
         # ----------------
-        save_button = Button(button_frame, textvariable=controller.save_var, height=3, width=10, command=save)
+        save_button = Button(button_frame, textvariable=controller.save_var,
+                             bg="white", height=3, width=10, command=save, bd=0,
+                             activebackground='#0f65af', activeforeground='white')
         save_button.grid(row=0, column=0, padx=2)
         # ----------------
-        stored_button = Button(button_frame, textvariable=controller.stored_var, height=3, width=10, command=stored)
+        stored_button = Button(button_frame, textvariable=controller.stored_var,
+                               bg="white", height=3, width=10, command=stored, bd=0,
+                               activebackground='#0f65af', activeforeground='white')
         stored_button.grid(row=0, column=1, padx=2)
         # ----------------
-        delete_button = Button(button_frame, textvariable=controller.delete_var, height=3, width=10, command=delete)
+        delete_button = Button(button_frame, textvariable=controller.delete_var,
+                               bg="white", height=3, width=10, command=delete, bd=0,
+                               activebackground='#0f65af', activeforeground='white')
         delete_button.grid(row=0, column=2, padx=2)
         # ============================================
 
@@ -305,8 +312,8 @@ class Page3(Frame):
 
         # Button for showing diagram
         self.pie_icon = PhotoImage(file="icons/diagram.png")
-        pie_icon = Button(self, image=self.pie_icon, bg="#f6f7fb", command=plot,
-                          activebackground="#f6f7fb")
+        pie_icon = Button(self, image=self.pie_icon, bg="white", command=plot,
+                          bd=0.5, activebackground='#0f65af',activeforeground='white')
 
         pie_icon.pack(pady=10, anchor='nw')
 
