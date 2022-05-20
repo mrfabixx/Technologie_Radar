@@ -5,6 +5,7 @@ from tkinter import messagebox
 from tkinter import filedialog
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+from os import remove
 
 import Search_sentiment_analysis
 
@@ -21,6 +22,10 @@ class App(Frame):
         self.msg_label_var = StringVar()
         self.question1_var = StringVar()
         self.question2_var = StringVar()
+        self.create_var = StringVar()
+        self.save_var = StringVar()
+        self.stored_var = StringVar()
+        self.delete_var = StringVar()
 
         '''Creating Pages'''
         container = Frame(self, bg="#f6f7fb")
@@ -89,7 +94,7 @@ class Page1(Frame):
         # label
         controller.search_label_var.set("Suche")
         label_search = Label(self, textvariable=controller.search_label_var, bg="#f6f7fb")
-        label_search.place(x=2, y=2)
+        label_search.pack(pady=10, anchor='nw')
 
         # Keywords
         keywords_entry = ttk.Entry(self)
@@ -203,25 +208,71 @@ class Page2(Frame):
 
         controller.data_label_var.set('Datenbank')
         label = Label(self, textvariable=controller.data_label_var, bg="#f6f7fb")
-        label.place(x=2, y=2)
+        label.pack(pady=10, anchor='nw')
 
-        host = ttk.Entry(self)
-        database = ttk.Entry(self)
-        user = ttk.Entry(self)
-        password = ttk.Entry(self)
-        port = ttk.Entry(self)
+        # ----
+        button_frame = Frame(self)
+        button_frame.pack(side=BOTTOM)
+        # ============================================
 
-        host.pack()
-        database.pack()
-        user.pack()
-        password.pack()
-        port.pack()
+        # ======--- text field -----======
+        text_input = Text(self, height=15, bg="white", font=("arial", 14, 'bold'))
+        text_input.pack(anchor=N, expand=True)
 
-        # dataset = 0
-        # dataset_count = Label(self, text=f'Datensätze . . . . . . . . . . . . . . . . . . . .  {dataset}',
-        #                       bg="#f6f7fb", anchor=W)
-        #
-        # dataset_count.place(relx=0.2, rely=0.1, relwidth=0.5, height=30, anchor=NW)
+        # --------- functions ---------
+        def create():
+            text_input.delete('1.0', END)
+            text_input.insert(END, f'[postgresql]\n')
+            text_input.insert(END, f"\nhost=")
+            text_input.insert(END, f"\ndatabase=")
+            text_input.insert(END, f"\nuser=")
+            text_input.insert(END, f"\npassword=")
+            text_input.insert(END, f"\nport=")
+
+        def save():
+            text_file = open('datenbankverbindung.ini', 'w')
+            text_file.write(text_input.get(1.0, END))
+            text_file.close()
+
+        def stored():
+            text_input.delete('1.0', END)
+            try:
+                f = open('datenbankverbindung.ini')
+                text_input.insert(1.0, f.read())
+
+            except:
+                text_input.insert(END, f'No data saved')
+
+        def delete():
+            text_input.delete('1.0', END)
+            #remove('datenbankverbindung.ini')
+
+        # --------- auto-input ---------
+        try:
+            stored()
+
+        except:
+            create()
+
+        # =====--------- language vars -----------========
+        controller.create_var.set('Erstellen')
+        controller.save_var.set('Speichern')
+        controller.stored_var.set('Gespeichert')
+        controller.delete_var.set('Löschen')
+
+        # =====--------- Buttons -----------========
+        create_button = Button(button_frame, textvariable=controller.create_var, height=3, width=10, command=create)
+        create_button.grid(row=0, column=3, padx=2)
+        # ----------------
+        save_button = Button(button_frame, textvariable=controller.save_var, height=3, width=10, command=save)
+        save_button.grid(row=0, column=0, padx=2)
+        # ----------------
+        stored_button = Button(button_frame, textvariable=controller.stored_var, height=3, width=10, command=stored)
+        stored_button.grid(row=0, column=1, padx=2)
+        # ----------------
+        delete_button = Button(button_frame, textvariable=controller.delete_var, height=3, width=10, command=delete)
+        delete_button.grid(row=0, column=2, padx=2)
+        # ============================================
 
 
 class Page3(Frame):
@@ -231,7 +282,7 @@ class Page3(Frame):
         # Label diagram
         controller.diagram_label_var.set('Diagramm')
         label = Label(self, textvariable=controller.diagram_label_var, bg="#f6f7fb")
-        label.place(x=2, y=2)
+        label.pack(pady=10, anchor='nw')
 
         # plot function
         def plot():
@@ -257,7 +308,7 @@ class Page3(Frame):
         pie_icon = Button(self, image=self.pie_icon, bg="#f6f7fb", command=plot,
                           activebackground="#f6f7fb")
 
-        pie_icon.place(relx=0, rely=0, anchor=NW)
+        pie_icon.pack(pady=10, anchor='nw')
 
         # export function
         def export():
@@ -312,6 +363,10 @@ class Page4(Frame):
                 controller.msg_label_var.set("Anzahl der Posts")
                 controller.question1_var.set("Wirklich Abbrechen?")
                 controller.question2_var.set("Wollen Sie den Vorgang abbrechen?")
+                controller.create_var.set('Erstellen')
+                controller.save_var.set('Speichern')
+                controller.stored_var.set('Gespeichert')
+                controller.delete_var.set('Löschen')
 
             elif choice == 'English':
 
@@ -323,6 +378,10 @@ class Page4(Frame):
                 controller.msg_label_var.set("Number of posts")
                 controller.question1_var.set("Warning!")
                 controller.question2_var.set("Do you want to abort the process?")
+                controller.create_var.set('Create')
+                controller.save_var.set('Save')
+                controller.stored_var.set('Stored')
+                controller.delete_var.set('Delete')
 
             elif choice == 'Česky':
 
@@ -334,6 +393,10 @@ class Page4(Frame):
                 controller.msg_label_var.set("Počet příspěvků")
                 controller.question1_var.set("Varování!")
                 controller.question2_var.set("Chcete proces přerušit?")
+                controller.create_var.set('Vytvořit')
+                controller.save_var.set('Uložit')
+                controller.stored_var.set('Uloženo')
+                controller.delete_var.set('Smazat')
 
         languages.bind('<<ComboboxSelected>>', language_change)
 
