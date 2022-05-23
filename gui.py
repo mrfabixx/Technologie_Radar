@@ -2,12 +2,11 @@ from tkinter import *
 from tkinter import ttk
 import webbrowser
 from tkinter import messagebox
-from tkinter import filedialog
+from tkinter.filedialog import asksaveasfilename
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
-from os import remove
 
 import Search_sentiment_analysis
+import diagram
 
 
 class App(Frame):
@@ -25,7 +24,6 @@ class App(Frame):
         self.create_var = StringVar()
         self.save_var = StringVar()
         self.stored_var = StringVar()
-        self.delete_var = StringVar()
 
         '''Creating Pages'''
         container = Frame(self, bg="#f6f7fb")
@@ -42,10 +40,10 @@ class App(Frame):
         button_frame.pack(side="left", fill="both", expand=False)
 
         # Icons
-        self.radar_btn = PhotoImage(file="icons/wradar.png")
-        self.databank_btn = PhotoImage(file="icons/wdatabank.png")
-        self.diagram_btn = PhotoImage(file="icons/wdiagram.png")
-        self.settings_btn = PhotoImage(file="icons/wsettings.png")
+        self.radar_btn = PhotoImage(file="icons/wradar.png", master=self)
+        self.databank_btn = PhotoImage(file="icons/wdatabank.png", master=self)
+        self.diagram_btn = PhotoImage(file="icons/wdiagram.png", master=self)
+        self.settings_btn = PhotoImage(file="icons/wsettings.png", master=self)
 
         # Buttons for Pages
         def start():
@@ -82,7 +80,7 @@ class App(Frame):
         b4.pack(side="bottom")
 
     def show_frame(self, page_name):
-        '''Show a frame for the given page name'''
+        # Show a frame for the given page name
         frame = self.frames[page_name]
         frame.tkraise()
 
@@ -95,6 +93,7 @@ class Page1(Frame):
         controller.search_label_var.set("Suche")
         label_search = Label(self, textvariable=controller.search_label_var, bg="#f6f7fb")
         label_search.pack(pady=10, anchor='nw')
+        # ============================================
 
         # Keywords
         keywords_entry = ttk.Entry(self)
@@ -121,28 +120,29 @@ class Page1(Frame):
                 Search_sentiment_analysis.printTweets(None, None)
 
         # Start Button
-        start_button = Button(self, text="START", font=8, bg="#f9faff", command=start_toggle, state=DISABLED, activebackground='white',
+        start_button = Button(self, text="START", font=8, bg="#f9faff", command=start_toggle, state=DISABLED,
+                              activebackground='white',
                               borderwidth=0.5)
         start_button.place(relx=0.3, rely=0.8, relheight=0.1, relwidth=0.3, anchor=NW)
 
         # Icons
-        self.facebook_icon = PhotoImage(file="icons/facebook.png")
-        self.linkedin_icon = PhotoImage(file="icons/linkedin.png")
-        self.twitter_icon = PhotoImage(file="icons/twitter.png")
-        self.info_icon = PhotoImage(file="icons/info.png")
+        self.facebook_icon = PhotoImage(file="icons/facebook.png", master=self)
+        self.linkedin_icon = PhotoImage(file="icons/linkedin.png", master=self)
+        self.twitter_icon = PhotoImage(file="icons/twitter.png", master=self)
+        self.info_icon = PhotoImage(file="icons/info.png", master=self)
 
         # selected Icons
-        self.bleach_facebook_icon = PhotoImage(file="icons/bleach_facebook.png")
-        self.bleach_linkedin_icon = PhotoImage(file="icons/bleach_linkedin.png")
-        self.bleach_twitter_icon = PhotoImage(file="icons/bleach_twitter.png")
+        self.bleach_facebook_icon = PhotoImage(file="icons/bleach_facebook.png", master=self)
+        self.bleach_linkedin_icon = PhotoImage(file="icons/bleach_linkedin.png", master=self)
+        self.bleach_twitter_icon = PhotoImage(file="icons/bleach_twitter.png", master=self)
 
         # Define a callback function for Link
         def callback():
             webbrowser.open_new_tab('https://de.wikipedia.org/wiki/Sentiment_Detection')
 
         # Button select
-        select_smedia = StringVar()
-        select_smedia.set("facebook")
+        select_smedia = IntVar()
+        select_smedia.set(1)
 
         def select():
             selected_media = select_smedia.get()
@@ -152,28 +152,26 @@ class Page1(Frame):
             else:
                 start_button['state'] = NORMAL
 
-
-        # Buttons
+        # =====--------- Buttons -----------========
         facebook_btn = Radiobutton(self, image=self.bleach_facebook_icon, variable=select_smedia, value=1,
                                    command=select, bg="#f6f7fb", selectimage=self.facebook_icon, selectcolor="#f6f7fb",
-                                   indicatoron=0, activebackground="#f6f7fb", borderwidth=0)
+                                   indicatoron=FALSE, activebackground="#f6f7fb", borderwidth=0)
         linkedin_btn = Radiobutton(self, image=self.bleach_linkedin_icon, variable=select_smedia, value=2,
                                    command=select, bg="#f6f7fb", selectimage=self.linkedin_icon, selectcolor="#f6f7fb",
-                                   indicatoron=0, activebackground="#f6f7fb", borderwidth=0)
+                                   indicatoron=FALSE, activebackground="#f6f7fb", borderwidth=0)
         twitter_btn = Radiobutton(self, image=self.bleach_twitter_icon, variable=select_smedia, value=3,
                                   command=select, bg="#f6f7fb", selectimage=self.twitter_icon, selectcolor="#f6f7fb",
-                                  indicatoron=0, activebackground="#f6f7fb", borderwidth=0)
+                                  indicatoron=FALSE, activebackground="#f6f7fb", borderwidth=0)
 
-        # Info Button and hovertip
+        # --------- Info Button & Hover tip ---------
         info_btn = Button(self, image=self.info_icon, bg="#f6f7fb", command=callback,
                           activebackground="#f6f7fb", borderwidth=0)
 
         # Hover-tip
         controller.hover_label_var.set("Was ist eine Sentiment Analyse?")
-
         hover_label = Label(textvariable=controller.hover_label_var, bg="#ffffff", relief='raised')
 
-        # function to appear , when button on hover
+        # --------- Hover tip function ---------
         def changeOnHover(button):
             button.bind("<Enter>", func=lambda e: hover_label.place(relx=0.95, rely=0.01, anchor=NE))
 
@@ -181,13 +179,10 @@ class Page1(Frame):
             button.bind("<Leave>", func=lambda e: hover_label.place_forget())
 
         changeOnHover(info_btn)
-
         info_btn.place(relx=1, rely=0, anchor=NE)
 
-        def select_post_count(selected_quantity):
-            Search_sentiment_analysis.result_quantity(count=selected_quantity)
-
-        # Number of posts in Entry
+        # ============================================
+        # ======--- number entry  -----======
         number_posts = ttk.Entry(self, justify=CENTER)
         number_posts.place(relx=0.3, rely=0.6, relwidth=0.3, anchor=NW)
 
@@ -200,6 +195,7 @@ class Page1(Frame):
         facebook_btn.place(relx=0.2, rely=0.3, height=100, anchor=NW)
         linkedin_btn.place(relx=0.4, rely=0.3, height=100, anchor=NW)
         twitter_btn.place(relx=0.6, rely=0.3, height=100, anchor=NW)
+        # ============================================
 
 
 class Page2(Frame):
@@ -210,9 +206,6 @@ class Page2(Frame):
         label = Label(self, textvariable=controller.data_label_var, bg="#f6f7fb")
         label.pack(pady=10, anchor='nw')
 
-        # ----
-        button_frame = Frame(self)
-        button_frame.pack(side=BOTTOM)
         # ============================================
 
         # ======--- text field -----======
@@ -230,48 +223,48 @@ class Page2(Frame):
             text_input.insert(END, f"\nport=")
 
         def save():
-            text_file = open('datenbankverbindung.ini', 'w')
+            text_file = open('dbcon.ini', 'w')
             text_file.write(text_input.get(1.0, END))
             text_file.close()
 
         def stored():
             text_input.delete('1.0', END)
             try:
-                f = open('datenbankverbindung.ini')
+                f = open('dbcon.ini')
                 text_input.insert(1.0, f.read())
 
-            except:
+            finally:
                 text_input.insert(END, f'No data saved')
-
-        def delete():
-            text_input.delete('1.0', END)
-            #remove('datenbankverbindung.ini')
 
         # --------- auto-input ---------
         try:
             stored()
 
-        except:
+        finally:
             create()
 
         # =====--------- language vars -----------========
-        controller.create_var.set('Erstellen')
+        controller.create_var.set('Neu')
         controller.save_var.set('Speichern')
         controller.stored_var.set('Gespeichert')
-        controller.delete_var.set('Löschen')
 
         # =====--------- Buttons -----------========
-        create_button = Button(button_frame, textvariable=controller.create_var, height=3, width=10, command=create)
-        create_button.grid(row=0, column=3, padx=2)
+
+        # ---- button frame ----
+        button_frame = Frame(self)
+        button_frame.pack()
+        # ---- buttons ----
+        create_button = Button(button_frame, textvariable=controller.create_var, bg="white", height=3,
+                               width=10, command=create, bd=0, fg="black", activebackground='#0f65af')
+        create_button.grid(row=0, column=2, padx=2)
         # ----------------
-        save_button = Button(button_frame, textvariable=controller.save_var, height=3, width=10, command=save)
+        save_button = Button(button_frame, textvariable=controller.save_var, bg="white", height=3,
+                             width=10, command=save, bd=0, fg="black", activebackground='#0f65af')
         save_button.grid(row=0, column=0, padx=2)
         # ----------------
-        stored_button = Button(button_frame, textvariable=controller.stored_var, height=3, width=10, command=stored)
+        stored_button = Button(button_frame, textvariable=controller.stored_var, bg="white", height=3,
+                               width=10, command=stored, bd=0, fg="black", activebackground='#0f65af')
         stored_button.grid(row=0, column=1, padx=2)
-        # ----------------
-        delete_button = Button(button_frame, textvariable=controller.delete_var, height=3, width=10, command=delete)
-        delete_button.grid(row=0, column=2, padx=2)
         # ============================================
 
 
@@ -279,48 +272,43 @@ class Page3(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, bg='#f6f7fb')
 
-        # Label diagram
+        # Label
         controller.diagram_label_var.set('Diagramm')
         label = Label(self, textvariable=controller.diagram_label_var, bg="#f6f7fb")
-        label.pack(pady=10, anchor='nw')
+        label.pack(anchor=NW)
+        # ============================================
 
-        # plot function
-        def plot():
-            '''example diagram'''
+        # =====--------- Diagram -----------========
+        fig = diagram.display_diagram()
 
-            # x-axis values in a list
-            x = [7, 2, 5]
-
-            # y-axis values in a list
-            stimmen = ['Positiv', 'Negativ', 'Neutral']
-
-            fig = Figure(figsize=(5, 5), facecolor='#f6f7fb')
-            a = fig.add_subplot(111)
-            a.pie(x, labels=stimmen)
-
+        def draw_canvas():
             # diagram displayed on canvas
             canvas = FigureCanvasTkAgg(fig, master=self)
-            canvas.get_tk_widget().pack()
+            canvas.get_tk_widget().pack(anchor=N)
             canvas.draw()
-
-        # Button for showing diagram
-        self.pie_icon = PhotoImage(file="icons/diagram.png")
-        pie_icon = Button(self, image=self.pie_icon, bg="#f6f7fb", command=plot,
-                          activebackground="#f6f7fb")
-
-        pie_icon.pack(pady=10, anchor='nw')
 
         # export function
         def export():
-            file = filedialog.asksaveasfile(mode='w', defaultextension=".pdf",
-                                            filetypes=(("PDF file", "Technologie-Radar.pdf"), ("All Files", "*.*")))
-            if file:
-                fig.save()  # saves the image to the input file name.
+            a = asksaveasfilename(filetypes=(("PNG Image", "*.png"), ("All Files", "*.*")),
+                                  defaultextension='.png')
+            if a:
+                fig.savefig(a)
 
-        self.download_icon = PhotoImage(file="icons/download.png")
+        # ============================================
+        # =====--------- Buttons -----------========
+        # download button
+        self.download_icon = PhotoImage(file="icons/download.png", master=self)
         download_icon = Button(self, image=self.download_icon, bg="#f6f7fb", command=export,
-                               activebackground="#f6f7fb", borderwidth=0.5)
-        download_icon.place(relx=0.95, rely=0.95, anchor=SE)
+                               bd=0.5, activebackground='#0f65af', activeforeground='white')
+        download_icon.pack(anchor=NW)
+
+        # Button for showing diagram
+        self.pie_icon = PhotoImage(file="icons/diagram.png", master=self)
+        pie_icon = Button(self, image=self.pie_icon, bg="white", command=draw_canvas,
+                          bd=0.5, activebackground='#0f65af', activeforeground='white')
+
+        pie_icon.pack(anchor=NW)
+        # ============================================
 
 
 class Page4(Frame):
@@ -350,7 +338,7 @@ class Page4(Frame):
         languages.place(relx=0.2, rely=0.4)
 
         # bind the selected value changes
-        def language_change(event):
+        def language_change():
             choice = selected_lang.get()
             '''Languages'''
             if choice == 'Deutsch':
@@ -363,10 +351,9 @@ class Page4(Frame):
                 controller.msg_label_var.set("Anzahl der Posts")
                 controller.question1_var.set("Wirklich Abbrechen?")
                 controller.question2_var.set("Wollen Sie den Vorgang abbrechen?")
-                controller.create_var.set('Erstellen')
+                controller.create_var.set('Neu')
                 controller.save_var.set('Speichern')
                 controller.stored_var.set('Gespeichert')
-                controller.delete_var.set('Löschen')
 
             elif choice == 'English':
 
@@ -378,10 +365,9 @@ class Page4(Frame):
                 controller.msg_label_var.set("Number of posts")
                 controller.question1_var.set("Warning!")
                 controller.question2_var.set("Do you want to abort the process?")
-                controller.create_var.set('Create')
+                controller.create_var.set('New')
                 controller.save_var.set('Save')
                 controller.stored_var.set('Stored')
-                controller.delete_var.set('Delete')
 
             elif choice == 'Česky':
 
@@ -393,10 +379,9 @@ class Page4(Frame):
                 controller.msg_label_var.set("Počet příspěvků")
                 controller.question1_var.set("Varování!")
                 controller.question2_var.set("Chcete proces přerušit?")
-                controller.create_var.set('Vytvořit')
+                controller.create_var.set('Nový')
                 controller.save_var.set('Uložit')
                 controller.stored_var.set('Uloženo')
-                controller.delete_var.set('Smazat')
 
         languages.bind('<<ComboboxSelected>>', language_change)
 
@@ -404,7 +389,7 @@ class Page4(Frame):
         def callback(url):
             webbrowser.open_new_tab(url)
 
-        self.logo_png = PhotoImage(file="icons/Logo.png")
+        self.logo_png = PhotoImage(file="icons/Logo.png", master=self)
 
         # Labels
         link = Label(self, text="Github", bg="#f6f7fb",
@@ -429,8 +414,8 @@ if __name__ == "__main__":
     main = App(root)
     main.pack(side="top", fill="both", expand=True)
     root.title('Technologie Radar')
-    root.iconbitmap('icons/Logo.ico')
+    root.iconbitmap('Logo.ico')
     root.wm_geometry('800x600')
-    root.minsize(800, 600)
+    root.minsize(900, 675)
     # root.resizable(width=False, height=False)
     root.mainloop()
