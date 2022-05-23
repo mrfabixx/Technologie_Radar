@@ -15,8 +15,6 @@ conn.autocommit = True
 params_ = config()
 
 
-
-
 # funktion, die keywörter filtert in der haeadline, im text oder hashtags
 def searchTweets(query, get_quantity):
     client = tweepy.Client(bearer_token=config_keys.BEARER_TOKEN)
@@ -101,5 +99,3 @@ def printTweets(get_keyword, get_quantity):
 
         cur.close()
         conn.close()
-
-
