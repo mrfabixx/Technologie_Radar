@@ -25,3 +25,18 @@ def get_digit_sentimentresults():
     cur.close()
     conn.close()
     return resultDigits
+
+#creates a table which will contain the collected tweets and their sentiment
+def create_table():
+
+    params_ = config()
+    conn = psycopg2.connect(**params_)
+    cur = conn.cursor()
+
+    cur.execute( """CREATE TABLE sentimentresults (
+        orginaltweet char(280),
+        sentiment numeric(18,17)
+        )""",)
+
+    cur.close()
+    conn.commit()
