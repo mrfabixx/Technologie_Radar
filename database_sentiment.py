@@ -2,7 +2,7 @@ import psycopg2  # so you can work with postgresql
 from database_connection_config import config
 
 
-# returns a list that contains the sentiment result for each tweet
+# returns a list of floats that represent the sentiment result for each tweet
 def get_digit_sentimentresults():
     #connect to SQL database
     params_ = config()
