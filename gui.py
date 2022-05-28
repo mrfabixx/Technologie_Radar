@@ -233,14 +233,14 @@ class Page2(Frame):
                 f = open('dbcon.ini')
                 text_input.insert(1.0, f.read())
 
-            finally:
+            except:
                 text_input.insert(END, f'No data saved')
 
         # --------- auto-input ---------
         try:
             stored()
 
-        finally:
+        except:
             create()
 
         # =====--------- language vars -----------========
@@ -279,9 +279,11 @@ class Page3(Frame):
         # ============================================
 
         # =====--------- Diagram -----------========
-        fig = diagram.display_diagram()
+        fig = None
+
 
         def draw_canvas():
+            fig = diagram.display_diagram()
             # diagram displayed on canvas
             canvas = FigureCanvasTkAgg(fig, master=self)
             canvas.get_tk_widget().pack(anchor=N)

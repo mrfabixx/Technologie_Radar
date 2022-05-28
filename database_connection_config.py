@@ -1,8 +1,10 @@
 from configparser import ConfigParser
+import os
 
 
 def config(filename='dbcon.ini', section='postgresql'): #dbcon.ini = file which contains the logininformation for the sql server
     # create a parser
+
     parser = ConfigParser()
     parser.read(filename)
 
