@@ -1,7 +1,9 @@
 from configparser import ConfigParser
+import os
 
 
 def config(filename='dbcon.ini', section='postgresql'):
+
     parser = ConfigParser()
     parser.read(filename)
 
