@@ -342,9 +342,9 @@ class Page4(Frame):
         languages.place(relx=0.2, rely=0.4)
 
         # bind the selected value changes
-        def language_change():
+        def language_change(choice):
             choice = selected_lang.get()
-            '''Languages'''
+            # =====--------- Language words -----------========
             if choice == 'Deutsch':
 
                 lang_label_var.set('Sprache:')
