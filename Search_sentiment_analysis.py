@@ -4,7 +4,10 @@ import config_keys
 import re
 import matplotlib.pyplot as plt
 
+import hand_over_results
+
 plt.style.use('fivethirtyeight')
+
 import psycopg2
 from database_connection_config import config
 
@@ -68,34 +71,27 @@ def get_polarity(text):
     return polarity
 
 
-def printTweets(get_keyword, get_quantity):
-    if get_keyword is None:
-        return
-    else:
+def printTweets(get_keyword, get_quantity, run):
+    if run:
+
         tweets = searchTweets(get_keyword, get_quantity)
 
         String_text = '##ll=='.join(tweets)
         String_text_1 = String_text.split('##ll==')
 
-        i = 1
+        try:
+            cur.execute("Delete from sentimentresults")
+
+        except psycopg2.ProgrammingError:
+            hand_over_results.create_table()
+            cur.execute("Delete from sentimentresults")
+
         for element in String_text_1:
             cleaning_tweet = cleanText(element)
             score_polarity = get_polarity(cleaning_tweet)
 
-            cur.execute("INSERT INTO Sentimentresults (orginaltweet,sentiment)"
+            cur.execute("INSERT INTO sentimentresults (orginaltweet,sentiment)"
                         "VALUES(%s, %s)", (cleaning_tweet, score_polarity,))
-
-            print(str(i) + ') ' + cleaning_tweet)
-            print("score_polarity: " + str(score_polarity))
-            if score_polarity < 0:
-                print("Der Tweet ist negativ")
-            elif score_polarity > 0:
-                print("Der Tweet ist positiv")
-            elif score_polarity == 0:
-                print("Der Tweet ist neutral")
-                print("\n")
-            i += 1
-        # cur.execute("Delete from sentimentresults")
 
         cur.close()
         conn.close()

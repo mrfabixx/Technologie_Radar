@@ -111,13 +111,14 @@ class Page1(Frame):
             if start_button.config('text')[-1] == 'START':
                 start_button.config(text='STOP')
                 printKeywords(keywords_entry.get())
-                Search_sentiment_analysis.printTweets(keywords_entry.get(), number_posts.get())
+                Search_sentiment_analysis.printTweets(keywords_entry.get(), number_posts.get(), True)
 
             else:
                 ab = messagebox.askquestion(controller.question1_var.get(), controller.question2_var.get())
                 if ab == "yes":
                     start_button.config(text='START')
-                Search_sentiment_analysis.printTweets(None, None)
+                Search_sentiment_analysis.printTweets(None, None, run=False)
+                # Search_sentiment_analysis.printTweets(None, None)
 
         # Start Button
         start_button = Button(self, text="START", font=8, bg="#f9faff", command=start_toggle, state=DISABLED,
@@ -142,7 +143,8 @@ class Page1(Frame):
 
         # Button select
         select_smedia = IntVar()
-        select_smedia.set(1)
+
+        # select_smedia.set(1)
 
         def select():
             selected_media = select_smedia.get()
@@ -276,11 +278,10 @@ class Page3(Frame):
         controller.diagram_label_var.set('Diagramm')
         label = Label(self, textvariable=controller.diagram_label_var, bg="#f6f7fb")
         label.pack(anchor=NW)
+
         # ============================================
 
         # =====--------- Diagram -----------========
-        fig = None
-
 
         def draw_canvas():
             fig = diagram.display_diagram()
@@ -294,6 +295,7 @@ class Page3(Frame):
             a = asksaveasfilename(filetypes=(("PNG Image", "*.png"), ("All Files", "*.*")),
                                   defaultextension='.png')
             if a:
+                fig = diagram.display_diagram()
                 fig.savefig(a)
 
         # ============================================
