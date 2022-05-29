@@ -4,7 +4,7 @@ import webbrowser
 from tkinter import messagebox
 from tkinter.filedialog import asksaveasfilename
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
+# ---- Import from other files ----
 import Search_sentiment_analysis
 import diagram
 
@@ -12,8 +12,14 @@ import diagram
 class App(Frame):
     def __init__(self, *args, **kwargs):
         Frame.__init__(self, *args, **kwargs)
+        '''The class App is based on the class Frame from Tkinter, but with some behaviors slightly customized. The 
+        App class will need to call code from the Frame class. That's what's happening here: when App is instantiate, 
+        Frame is initialized as a  first, and then performs the App-specific initialization. Here App explicitly 
+        calls its parent class's __init__() method. Because Tkinter uses "old-style classes", you have to do it the 
+        old way here. (Usually you could also do this using the super() function it's basically required in 
+        multiple-inheritance scenarios.) '''
 
-        # Label variables
+        # ---- Label variables ----
         self.search_label_var = StringVar()
         self.hover_label_var = StringVar()
         self.data_label_var = StringVar()
@@ -25,7 +31,8 @@ class App(Frame):
         self.save_var = StringVar()
         self.stored_var = StringVar()
 
-        '''Creating Pages'''
+        # ======--- Creating Pages -----======
+        # ---- Container for Pages ----
         container = Frame(self, bg="#f6f7fb")
         container.pack(side="right", fill="both", expand=True)
 
@@ -35,17 +42,22 @@ class App(Frame):
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
             frame.place(in_=container, x=0, y=0, relwidth=1, relheight=1)
+        # build form bottom up, so that the program starts with Page1
+        # If, for what ever reason, want to start with Page3:
+        # you can write for F in (Page4, Page2, Page1, Page3):
 
+        # ---- Frame for Buttons ----
         button_frame = Frame(self, bg="#0f65af")
         button_frame.pack(side="left", fill="both", expand=False)
 
-        # Icons
+        # ---- Icons ----
         self.radar_btn = PhotoImage(file="icons/wradar.png", master=self)
         self.databank_btn = PhotoImage(file="icons/wdatabank.png", master=self)
         self.diagram_btn = PhotoImage(file="icons/wdiagram.png", master=self)
         self.settings_btn = PhotoImage(file="icons/wsettings.png", master=self)
 
-        # Buttons for Pages
+        # ======--- Buttons for Page Menu -----======
+        # ---- Menu-Buttons and Functions to call the Page ----
         def start():
             self.show_frame('Page1')
 
@@ -53,6 +65,7 @@ class App(Frame):
                     activebackground="#003055", command=start, relief='raised',
                     borderwidth=0)
 
+        # ----------------
         def data():
             self.show_frame('Page2')
 
@@ -60,6 +73,7 @@ class App(Frame):
                     activebackground="#003055", command=data, relief='raised',
                     borderwidth=0)
 
+        # ----------------
         def result():
             self.show_frame('Page3')
 
@@ -67,6 +81,7 @@ class App(Frame):
                     activebackground="#003055", command=result, relief='raised',
                     borderwidth=0)
 
+        # ----------------
         def settings():
             self.show_frame('Page4')
 
@@ -74,11 +89,13 @@ class App(Frame):
                     activebackground="#003055", command=settings, relief='raised',
                     borderwidth=0)
 
+        # ---- Button Placements ----
         b1.pack(side="top")
         b2.pack(side="top")
         b3.pack(side="top")
         b4.pack(side="bottom")
 
+    # ======--- Page Call function -----======
     def show_frame(self, page_name):
         # Show a frame for the given page name
         frame = self.frames[page_name]
@@ -89,7 +106,7 @@ class Page1(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, bg='#f6f7fb')
 
-        # label
+        # ---- Search Label ----
         controller.search_label_var.set("Suche")
         label_search = Label(self, textvariable=controller.search_label_var, bg="#f6f7fb")
         label_search.pack(pady=10, anchor='nw')
@@ -173,7 +190,7 @@ class Page1(Frame):
         controller.hover_label_var.set("Was ist eine Sentiment Analyse?")
         hover_label = Label(textvariable=controller.hover_label_var, bg="#ffffff", relief='raised')
 
-        # --------- Hover tip function ---------
+        # --------- Hovertip function ---------
         def changeOnHover(button):
             button.bind("<Enter>", func=lambda e: hover_label.place(relx=0.95, rely=0.01, anchor=NE))
 
@@ -204,11 +221,10 @@ class Page2(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, bg='#f6f7fb')
 
+        # ---- Database Label ----
         controller.data_label_var.set('Datenbank')
         label = Label(self, textvariable=controller.data_label_var, bg="#f6f7fb")
         label.pack(pady=10, anchor='nw')
-
-        # ============================================
 
         # ======--- text field -----======
         text_input = Text(self, height=15, bg="white", font=("arial", 14, 'bold'))
@@ -224,11 +240,13 @@ class Page2(Frame):
             text_input.insert(END, f"\npassword=")
             text_input.insert(END, f"\nport=")
 
+        # ----------------
         def save():
             text_file = open('dbcon.ini', 'w')
             text_file.write(text_input.get(1.0, END))
             text_file.close()
 
+        # ----------------
         def stored():
             text_input.delete('1.0', END)
             try:
@@ -274,23 +292,21 @@ class Page3(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, bg='#f6f7fb')
 
-        # Label
+        # ---- Diagram Label ----
         controller.diagram_label_var.set('Diagramm')
         label = Label(self, textvariable=controller.diagram_label_var, bg="#f6f7fb")
         label.pack(anchor=NW)
 
-        # ============================================
-
         # =====--------- Diagram -----------========
 
+        # ---- Create Canvas and displaying Diagram ----
         def draw_canvas():
             fig = diagram.display_diagram()
-            # diagram displayed on canvas
             canvas = FigureCanvasTkAgg(fig, master=self)
             canvas.get_tk_widget().pack(anchor=N)
             canvas.draw()
 
-        # export function
+        # ---- Export Diagram ----
         def export():
             a = asksaveasfilename(filetypes=(("PNG Image", "*.png"), ("All Files", "*.*")),
                                   defaultextension='.png')
@@ -298,15 +314,14 @@ class Page3(Frame):
                 fig = diagram.display_diagram()
                 fig.savefig(a)
 
-        # ============================================
         # =====--------- Buttons -----------========
-        # download button
+        # ---- Download Button ----
         self.download_icon = PhotoImage(file="icons/download.png", master=self)
         download_icon = Button(self, image=self.download_icon, bg="#f6f7fb", command=export,
                                bd=0.5, activebackground='#0f65af', activeforeground='white')
         download_icon.pack(anchor=NW)
 
-        # Button for showing diagram
+        # ---- Display Button ----
         self.pie_icon = PhotoImage(file="icons/diagram.png", master=self)
         pie_icon = Button(self, image=self.pie_icon, bg="white", command=draw_canvas,
                           bd=0.5, activebackground='#0f65af', activeforeground='white')
@@ -319,29 +334,31 @@ class Page4(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, bg='#f6f7fb')
 
+        # controller is used to control the StringVars,
+        # rather than make a widget responsible for global changes.
+        # Same as parent is used for the pages container
         self.controller = controller
 
+        # =====--------- Languages Selection -----------========
+        # ---- Language Label ----
         lang_label_var = StringVar()
         lang_label_var.set('Sprache:')
         label_lang = Label(self,
                            textvariable=lang_label_var, bg="#f6f7fb")
         label_lang.place(relx=0.1, rely=0.4)
 
-        # create a combobox
+        # ---- Combobox for selecting Language ----
         selected_lang = StringVar()
         selected_lang.set('Deutsch')
         languages = ttk.Combobox(self, textvariable=selected_lang)
 
-        # languages
+        # ---- Languages ----
         languages['values'] = ['Deutsch', 'English', 'Česky']
-
-        # prevent typing a value
         languages['state'] = 'readonly'
-
         # place the Language-select widget
         languages.place(relx=0.2, rely=0.4)
 
-        # bind the selected value changes
+        # ======--- Language StringVars -----======
         def language_change(choice):
             choice = selected_lang.get()
             # =====--------- Language words -----------========
@@ -377,7 +394,7 @@ class Page4(Frame):
 
                 lang_label_var.set('Jazyk:')
                 controller.search_label_var.set('Vyhledávání')
-                controller.hover_label_var.set("Co je to analýza sentimentu?")
+                controller.hover_label_var.set("Co je analýza sentimentu?")
                 controller.data_label_var.set('Databáze')
                 controller.diagram_label_var.set('Diagram')
                 controller.msg_label_var.set("Počet příspěvků")
@@ -389,13 +406,13 @@ class Page4(Frame):
 
         languages.bind('<<ComboboxSelected>>', language_change)
 
-        # Define a callback function for Link
+        # --------- Link callback Function ---------
         def callback(url):
             webbrowser.open_new_tab(url)
 
         self.logo_png = PhotoImage(file="icons/Logo.png", master=self)
 
-        # Labels
+        # ---- Link and Name Labels ----
         link = Label(self, text="Github", bg="#f6f7fb",
                      font=('Helveticabold', 12), fg="blue", cursor="hand2")
         readmelink = Label(self, text="readme", bg="#f6f7fb",
@@ -406,7 +423,7 @@ class Page4(Frame):
         link.bind('<Button-1>', lambda e: callback("https://github.com/mrfabixx/Technologie_Radar"))
         readmelink.bind('<Button-1>', lambda e: callback("README.md"))
 
-        # Placements
+        # ---- Placements ----
         vt.place(relx=0.1, rely=0.2)
         link.place(relx=0.1, rely=.55)
         readmelink.place(relx=0.1, rely=.6)
