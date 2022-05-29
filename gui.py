@@ -134,8 +134,8 @@ class Page1(Frame):
                 ab = messagebox.askquestion(controller.question1_var.get(), controller.question2_var.get())
                 if ab == "yes":
                     start_button.config(text='START')
-                Search_sentiment_analysis.printTweets(None, None, run=False)
-                # Search_sentiment_analysis.printTweets(None, None)
+                Search_sentiment_analysis.printTweets(None, None, False)
+                root.destroy()
 
         # Start Button
         start_button = Button(self, text="START", font=8, bg="#f9faff", command=start_toggle, state=DISABLED,
