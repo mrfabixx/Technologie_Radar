@@ -30,6 +30,7 @@ class App(Frame):
         self.create_var = StringVar()
         self.save_var = StringVar()
         self.stored_var = StringVar()
+        self.finish_label_var = StringVar()
 
         # ======--- Creating Pages -----======
         # ---- Container for Pages ----
@@ -112,7 +113,7 @@ class Page1(Frame):
         label_search.pack(pady=10, anchor='nw')
         # ============================================
 
-        # Keywords
+        # --------- Keywords ---------
         keywords_entry = ttk.Entry(self)
         keywords_entry.place(relx=0.2, rely=0.1, relwidth=0.53, height=30, anchor=NW)
 
@@ -120,14 +121,20 @@ class Page1(Frame):
             keywords_label = Label(self, text=f'Keywords: {take_keywords}', pady=1, bg="#f6f7fb", anchor=W)
             keywords_label.place(relx=0.2, rely=0.2, relwidth=0.5, anchor=NW)
 
-        # Start Button toggle and Warning-Message
+        # =====--------- Start Button Funktion -----------========
+        # --------- abort messagebox vars ---------
         controller.question1_var.set("Wirklich Abbrechen?")
         controller.question2_var.set("Wollen Sie den Vorgang abbrechen?")
+
+        # --------- finish label ---------
+        controller.finish_label_var.set('Fertig!')
+        finish_label = Label(self, textvariable=controller.finish_label_var, foreground='green', bg="#f6f7fb")
 
         def start_toggle():
             if start_button.config('text')[-1] == 'START':
                 start_button.config(text='STOP')
                 printKeywords(keywords_entry.get())
+                finish_label.place(relx=0.3, rely=0.9, relheight=0.1, relwidth=0.3, anchor=NW)
                 Search_sentiment_analysis.printTweets(keywords_entry.get(), number_posts.get(), True)
 
             else:
@@ -137,28 +144,28 @@ class Page1(Frame):
                 Search_sentiment_analysis.printTweets(None, None, False)
                 root.destroy()
 
-        # Start Button
+        # --------- Start Button ---------
         start_button = Button(self, text="START", font=8, bg="#f9faff", command=start_toggle, state=DISABLED,
                               activebackground='white',
                               borderwidth=0.5)
         start_button.place(relx=0.3, rely=0.8, relheight=0.1, relwidth=0.3, anchor=NW)
 
-        # Icons
+        # --------- Socail Media Buttons ---------
         self.facebook_icon = PhotoImage(file="icons/facebook.png", master=self)
         self.linkedin_icon = PhotoImage(file="icons/linkedin.png", master=self)
         self.twitter_icon = PhotoImage(file="icons/twitter.png", master=self)
         self.info_icon = PhotoImage(file="icons/info.png", master=self)
 
-        # selected Icons
+        # ------- greyed Buttons -------
         self.bleach_facebook_icon = PhotoImage(file="icons/bleach_facebook.png", master=self)
         self.bleach_linkedin_icon = PhotoImage(file="icons/bleach_linkedin.png", master=self)
         self.bleach_twitter_icon = PhotoImage(file="icons/bleach_twitter.png", master=self)
 
-        # Define a callback function for Link
+        # --------- Link Callback ---------
         def callback():
             webbrowser.open_new_tab('https://de.wikipedia.org/wiki/Sentiment_Detection')
 
-        # Button select
+        # --------- Media Button Select ---------
         select_smedia = IntVar()
 
         # select_smedia.set(1)
@@ -171,6 +178,7 @@ class Page1(Frame):
             else:
                 start_button['state'] = NORMAL
 
+        # ============================================
         # =====--------- Buttons -----------========
         facebook_btn = Radiobutton(self, image=self.bleach_facebook_icon, variable=select_smedia, value=1,
                                    command=select, bg="#f6f7fb", selectimage=self.facebook_icon, selectcolor="#f6f7fb",
@@ -375,6 +383,7 @@ class Page4(Frame):
                 controller.create_var.set('Neu')
                 controller.save_var.set('Speichern')
                 controller.stored_var.set('Gespeichert')
+                controller.finish_label_var.set('Fertig!')
 
             elif choice == 'English':
 
@@ -389,6 +398,7 @@ class Page4(Frame):
                 controller.create_var.set('New')
                 controller.save_var.set('Save')
                 controller.stored_var.set('Stored')
+                controller.finish_label_var.set('Finished!')
 
             elif choice == 'Česky':
 
@@ -403,6 +413,7 @@ class Page4(Frame):
                 controller.create_var.set('Nový')
                 controller.save_var.set('Uložit')
                 controller.stored_var.set('Uloženo')
+                controller.finish_label_var.set('Hotový!')
 
         languages.bind('<<ComboboxSelected>>', language_change)
 
