@@ -124,7 +124,7 @@ class Page1(Frame):
         # =====--------- Start Button Funktion -----------========
         # --------- abort messagebox vars ---------
         controller.question1_var.set("Wirklich Abbrechen?")
-        controller.question2_var.set("Wollen Sie den Vorgang abbrechen?")
+        controller.question2_var.set("Wollen Sie den Vorgang abbrechen? \nDie Datenbank-Einträge werden beim nächten START gelöscht!")
 
         # --------- finish label ---------
         controller.finish_label_var.set('Fertig!')
@@ -141,8 +141,8 @@ class Page1(Frame):
                 ab = messagebox.askquestion(controller.question1_var.get(), controller.question2_var.get())
                 if ab == "yes":
                     start_button.config(text='START')
-                Search_sentiment_analysis.printTweets(None, None, False)
-                root.destroy()
+                    Search_sentiment_analysis.printTweets(None, None, False)
+                    root.destroy()
 
         # --------- Start Button ---------
         start_button = Button(self, text="START", font=8, bg="#f9faff", command=start_toggle, state=DISABLED,
@@ -379,7 +379,7 @@ class Page4(Frame):
                 controller.diagram_label_var.set('Diagramm')
                 controller.msg_label_var.set("Anzahl der Posts")
                 controller.question1_var.set("Wirklich Abbrechen?")
-                controller.question2_var.set("Wollen Sie den Vorgang abbrechen?")
+                controller.question2_var.set("Wollen Sie den Vorgang abbrechen? \nDie Datenbank-Einträge werden beim nächten START gelöscht!")
                 controller.create_var.set('Neu')
                 controller.save_var.set('Speichern')
                 controller.stored_var.set('Gespeichert')
@@ -394,7 +394,7 @@ class Page4(Frame):
                 controller.diagram_label_var.set('Diagram')
                 controller.msg_label_var.set("Number of posts")
                 controller.question1_var.set("Warning!")
-                controller.question2_var.set("Do you want to abort the process?")
+                controller.question2_var.set("Do you want to abort the process? \nThe database entries will be deleted at the next START!")
                 controller.create_var.set('New')
                 controller.save_var.set('Save')
                 controller.stored_var.set('Stored')
@@ -409,7 +409,7 @@ class Page4(Frame):
                 controller.diagram_label_var.set('Diagram')
                 controller.msg_label_var.set("Počet příspěvků")
                 controller.question1_var.set("Varování!")
-                controller.question2_var.set("Chcete proces přerušit?")
+                controller.question2_var.set("Chcete proces přerušit? \nZáznamy v databázi se při příštím START!")
                 controller.create_var.set('Nový')
                 controller.save_var.set('Uložit')
                 controller.stored_var.set('Uloženo')
