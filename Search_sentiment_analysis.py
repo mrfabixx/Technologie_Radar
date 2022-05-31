@@ -4,18 +4,19 @@ import config_keys
 import re
 import matplotlib.pyplot as plt
 
-import hand_over_results
-
 plt.style.use('fivethirtyeight')
-
 import psycopg2
 from database_connection_config import config
 
+
+#import of database config to run the database
 params_ = config()
 conn = psycopg2.connect(**params_)
 cur = conn.cursor()
 conn.autocommit = True
 params_ = config()
+
+
 
 
 # funktion, die keywörter filtert in der haeadline, im text oder hashtags
@@ -34,7 +35,7 @@ def searchTweets(query, get_quantity):
             return []
     return results
 
-
+#emoji pattern to retrieve all the emoji pattern from the given tweets
 emoji_pattern = re.compile("["
                            u"\U0001F600-\U0001F64F"  # emoticons
                            u"\U0001F300-\U0001F5FF"  # symbols & pictographs
@@ -57,7 +58,8 @@ emoji_pattern = re.compile("["
                            "]+", flags=re.UNICODE)
 
 
-def cleanText(text):
+def cleanText(text): #function cleans the tweets to get only the text wich will be uploaded to the database
+
     text = re.sub(r'@[A-Za-z0-9]+', '', text)  # remove.substring mentions
     text = re.sub(r'#', '', text)  # removing the # symbol
     text = re.sub(r'RT[\s]+', '', text)  # remove RT
@@ -66,32 +68,42 @@ def cleanText(text):
     return text
 
 
-def get_polarity(text):
+def get_polarity(text): #function wich implements the textblob library wich analysis the given text
+
     polarity = TextBlob(text).sentiment.polarity
     return polarity
 
 
-def printTweets(get_keyword, get_quantity, run):
-    if run:
-
+def printTweets(get_keyword, get_quantity):#function wich gets the keyword and the quantity of tweets wich will given to the gui
+    if get_keyword is None:
+        return
+    else:
         tweets = searchTweets(get_keyword, get_quantity)
 
         String_text = '##ll=='.join(tweets)
         String_text_1 = String_text.split('##ll==')
 
-        try:
-            cur.execute("Delete from sentimentresults")
-
-        except psycopg2.ProgrammingError:
-            hand_over_results.create_table()
-            cur.execute("Delete from sentimentresults")
-
-        for element in String_text_1:
+        i = 1
+        for element in String_text_1: #loop through the joined String and call the clean and polarity function
             cleaning_tweet = cleanText(element)
             score_polarity = get_polarity(cleaning_tweet)
 
-            cur.execute("INSERT INTO sentimentresults (orginaltweet,sentiment)"
+            cur.execute("INSERT INTO Sentimentresults (orginaltweet,sentiment)" #cursor uploads the fetched tweets into the database
                         "VALUES(%s, %s)", (cleaning_tweet, score_polarity,))
 
-        cur.close()
+            print(str(i) + ') ' + cleaning_tweet)
+            print("score_polarity: " + str(score_polarity))
+            if score_polarity < 0:
+                print("Der Tweet ist negativ")
+            elif score_polarity > 0:
+                print("Der Tweet ist positiv")
+            elif score_polarity == 0:
+                print("Der Tweet ist neutral")
+                print("\n")
+            i += 1
+
+
+        cur.close()   #cursor for the database must be closed
         conn.close()
+
+
