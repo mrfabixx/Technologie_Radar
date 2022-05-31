@@ -13,7 +13,6 @@ try:
     conn = psycopg2.connect(**params_)
     cur = conn.cursor()
     conn.autocommit = True
-
 except:
     pass
 
@@ -21,9 +20,12 @@ except:
 # funktion, die keywörter filtert in der haeadline, im text oder hashtags
 def searchTweets(query, get_quantity):
     client = tweepy.Client(bearer_token=config_keys.BEARER_TOKEN)
+
     tweets_pack = client.search_recent_tweets(query=query, max_results=get_quantity)
+
     tweet_data = tweets_pack.data
     results = []
+
     for tweet in tweet_data:
         if not tweet_data is None and len(tweet_data) > 0:
             results.append(tweet.text)
@@ -81,11 +83,11 @@ def printTweets(get_keyword, get_quantity, run):
 
         except psycopg2.ProgrammingError:
             hand_over_results.create_table()
+            cur.execute("Delete from sentimentresults")
 
         for element in String_text_1:
             cleaning_tweet = cleanText(element)
             score_polarity = get_polarity(cleaning_tweet)
-
             cur.execute("INSERT INTO sentimentresults (orginaltweet,sentiment)"
                         "VALUES(%s, %s)", (cleaning_tweet, score_polarity,))
 

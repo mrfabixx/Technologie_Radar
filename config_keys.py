@@ -1,6 +1,3 @@
-
-#File wich contains the keys wich are used for the connection to the Twitter API
-
 API_KEY = "ODYDI5nMEbTObGicMeK6tS1SC"
 
 API_KEY_SECRET = "kthILRG132nhWgeMjvFNU4WgA2jUOwmqEIZia85QiKawH7IG29"

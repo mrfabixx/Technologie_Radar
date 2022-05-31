@@ -58,7 +58,7 @@ def display_diagram():
 
         plt.setp(autotexts, size=8, weight="bold")
 
-        # ax.set_title('Title')
+        ax.set_title('Title')
         plt.close()
         plt_get = fig
         return plt_get
