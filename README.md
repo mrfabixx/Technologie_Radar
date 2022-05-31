@@ -2,7 +2,7 @@
 README
 
 Application that evaluates tech discussions on positive and negative sentiments.
-The results are then presented by several ways
+The results are then presented by a diagram
 
 
 Technologie-Radar
