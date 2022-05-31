@@ -9,7 +9,7 @@ import psycopg2
 from database_connection_config import config
 
 
-#import of database config to run the database
+#   import of database config-file to run the database
 params_ = config()
 conn = psycopg2.connect(**params_)
 cur = conn.cursor()
@@ -18,12 +18,11 @@ params_ = config()
 
 
 
-
-# funktion, die keywörter filtert in der haeadline, im text oder hashtags
+#   function to get the query and the quntity of tweets wich will be given to the Gui
 def searchTweets(query, get_quantity):
     client = tweepy.Client(bearer_token=config_keys.BEARER_TOKEN)
 
-    tweets_pack = client.search_recent_tweets(query=query, max_results=get_quantity)
+    tweets_pack = client.search_recent_tweets(query=query, max_results=get_quantity) #fetches the data from twitter with the given keyword as query
 
     tweet_data = tweets_pack.data
     results = []
@@ -35,7 +34,7 @@ def searchTweets(query, get_quantity):
             return []
     return results
 
-#emoji pattern to retrieve all the emoji pattern from the given tweets
+#   emoji pattern to retrieve all the emojis from the given tweets
 emoji_pattern = re.compile("["
                            u"\U0001F600-\U0001F64F"  # emoticons
                            u"\U0001F300-\U0001F5FF"  # symbols & pictographs
@@ -58,7 +57,7 @@ emoji_pattern = re.compile("["
                            "]+", flags=re.UNICODE)
 
 
-def cleanText(text): #function cleans the tweets to get only the text wich will be uploaded to the database
+def cleanText(text): #  function cleans the tweets to get only the text wich will be uploaded to the database
 
     text = re.sub(r'@[A-Za-z0-9]+', '', text)  # remove.substring mentions
     text = re.sub(r'#', '', text)  # removing the # symbol
@@ -68,13 +67,13 @@ def cleanText(text): #function cleans the tweets to get only the text wich will 
     return text
 
 
-def get_polarity(text): #function wich implements the textblob library wich analysis the given text
+def get_polarity(text): # function wich implements the textblob library wich analysis the given text
 
     polarity = TextBlob(text).sentiment.polarity
     return polarity
 
 
-def printTweets(get_keyword, get_quantity):#function wich gets the keyword and the quantity of tweets wich will given to the gui
+def printTweets(get_keyword, get_quantity):#    function wich gets the keyword and the quantity of tweets wich will given to the gui
     if get_keyword is None:
         return
     else:
@@ -84,11 +83,11 @@ def printTweets(get_keyword, get_quantity):#function wich gets the keyword and t
         String_text_1 = String_text.split('##ll==')
 
         i = 1
-        for element in String_text_1: #loop through the joined String and call the clean and polarity function
+        for element in String_text_1: # loop through the joined String and call the clean and polarity function
             cleaning_tweet = cleanText(element)
             score_polarity = get_polarity(cleaning_tweet)
 
-            cur.execute("INSERT INTO Sentimentresults (orginaltweet,sentiment)" #cursor uploads the fetched tweets into the database
+            cur.execute("INSERT INTO Sentimentresults (orginaltweet,sentiment)" #   cursor uploads the fetched tweets into the database
                         "VALUES(%s, %s)", (cleaning_tweet, score_polarity,))
 
             print(str(i) + ') ' + cleaning_tweet)
@@ -103,7 +102,7 @@ def printTweets(get_keyword, get_quantity):#function wich gets the keyword and t
             i += 1
 
 
-        cur.close()   #cursor for the database must be closed
+        cur.close() #   cursor for the database must be closed
         conn.close()
 
 
