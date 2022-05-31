@@ -2,11 +2,8 @@ import tweepy
 from textblob import TextBlob
 import config_keys
 import re
-import matplotlib.pyplot as plt
 
 import hand_over_results
-
-plt.style.use('fivethirtyeight')
 
 import psycopg2
 from database_connection_config import config
@@ -33,6 +30,8 @@ def searchTweets(query, get_quantity):
         else:
             return []
     return results
+
+
 emoji_pattern = re.compile("["
                            u"\U0001F600-\U0001F64F"  # emoticons
                            u"\U0001F300-\U0001F5FF"  # symbols & pictographs
@@ -53,6 +52,8 @@ emoji_pattern = re.compile("["
                            u"\ufe0f"  # dingbats
                            u"\u3030"
                            "]+", flags=re.UNICODE)
+
+
 def cleanText(text):
     text = re.sub(r'@[A-Za-z0-9]+', '', text)  # remove.substring mentions
     text = re.sub(r'#', '', text)  # removing the # symbol
@@ -60,6 +61,8 @@ def cleanText(text):
     text = re.sub(r'http\S+', '', text)  # remove hyper link'
     text = emoji_pattern.sub(r'', text)
     return text
+
+
 def get_polarity(text):
     polarity = TextBlob(text).sentiment.polarity
     return polarity
@@ -78,7 +81,6 @@ def printTweets(get_keyword, get_quantity, run):
 
         except psycopg2.ProgrammingError:
             hand_over_results.create_table()
-            cur.execute("Delete from sentimentresults")
 
         for element in String_text_1:
             cleaning_tweet = cleanText(element)
