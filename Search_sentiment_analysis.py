@@ -21,7 +21,7 @@ except:
 def searchTweets(query, get_quantity):
     client = tweepy.Client(bearer_token=config_keys.BEARER_TOKEN)
 
-    tweets_pack = client.search_recent_tweets(query=query, max_results=get_quantity)
+    tweets_pack = client.search_recent_tweets(query=query, max_results=get_quantity)# search_recent_tweets is the function to call to get data from Twitter Api
 
     tweet_data = tweets_pack.data
     results = []
