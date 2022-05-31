@@ -2,7 +2,7 @@ import psycopg2
 
 from database_connection_config import config
 
-
+#creates a list wich contains the Sentiment result for each tweet 
 def get_digitsentimentresults():
     params_ = config()
     conn = psycopg2.connect(**params_)
