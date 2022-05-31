@@ -11,30 +11,28 @@ plt.style.use('fivethirtyeight')
 import psycopg2
 from database_connection_config import config
 
-params_ = config()
-conn = psycopg2.connect(**params_)
-cur = conn.cursor()
-conn.autocommit = True
-params_ = config()
+try:
+    params_ = config()
+    conn = psycopg2.connect(**params_)
+    cur = conn.cursor()
+    conn.autocommit = True
+
+except:
+    pass
 
 
 # funktion, die keywörter filtert in der haeadline, im text oder hashtags
 def searchTweets(query, get_quantity):
     client = tweepy.Client(bearer_token=config_keys.BEARER_TOKEN)
-
     tweets_pack = client.search_recent_tweets(query=query, max_results=get_quantity)
-
     tweet_data = tweets_pack.data
     results = []
-
     for tweet in tweet_data:
         if not tweet_data is None and len(tweet_data) > 0:
             results.append(tweet.text)
         else:
             return []
     return results
-
-
 emoji_pattern = re.compile("["
                            u"\U0001F600-\U0001F64F"  # emoticons
                            u"\U0001F300-\U0001F5FF"  # symbols & pictographs
@@ -55,8 +53,6 @@ emoji_pattern = re.compile("["
                            u"\ufe0f"  # dingbats
                            u"\u3030"
                            "]+", flags=re.UNICODE)
-
-
 def cleanText(text):
     text = re.sub(r'@[A-Za-z0-9]+', '', text)  # remove.substring mentions
     text = re.sub(r'#', '', text)  # removing the # symbol
@@ -64,8 +60,6 @@ def cleanText(text):
     text = re.sub(r'http\S+', '', text)  # remove hyper link'
     text = emoji_pattern.sub(r'', text)
     return text
-
-
 def get_polarity(text):
     polarity = TextBlob(text).sentiment.polarity
     return polarity
