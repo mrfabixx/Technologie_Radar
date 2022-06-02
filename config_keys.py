@@ -1,4 +1,4 @@
-#File wich contains the keys wich are used for the connection to the Twitter API
+#File which contains the keys wich are used for the connection to the Twitter API
 
 API_KEY = "ODYDI5nMEbTObGicMeK6tS1SC"
 
