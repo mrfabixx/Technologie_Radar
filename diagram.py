@@ -58,9 +58,9 @@ def display_diagram():          #Function which is supplied to the gui so that i
                                           startangle=90,
                                           wedgeprops=wp,
                                           textprops=dict(color="black"))
-"""
-Giving title to the diagram and place it!
-"""
+        """
+        Giving title to the diagram and place it!
+        """
         ax.legend(wedges, opinions,
                   title="different opinions",
                   loc="center left",  
