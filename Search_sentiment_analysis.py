@@ -56,7 +56,7 @@ emoji_pattern = re.compile("["
                            "]+", flags=re.UNICODE)
 
 
-# function cleans the tweets to get only the text wich will be uploaded to the database
+# function cleans the tweets to get only the text which will be uploaded to the database
 def cleanText(text):
     text = re.sub(r'@[A-Za-z0-9]+', '', text)  # remove.substring mentions
     text = re.sub(r'#', '', text)  # removing the # symbol
@@ -66,14 +66,14 @@ def cleanText(text):
     return text
 
 
-# function wich implements the textblob library wich analysis the given text
+# function which implements the textblob library which analysis the given text
 def get_polarity(text):
     polarity = TextBlob(text).sentiment.polarity
     return polarity
 
 
 
-# function wich gets the keyword and the quantity of tweets wich will given to the gui
+# function wich gets the keyword and the quantity of tweets which will given to the gui
 def printTweets(get_keyword, get_quantity, run):
     if run:
 
