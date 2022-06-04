@@ -87,13 +87,13 @@ def printTweets(get_keyword, get_quantity, run):
 
         except psycopg2.ProgrammingError:
             hand_over_results.create_table()
-            cur.execute("Delete from sentimentresults") # cursor uploads the fetched tweets into the database
+            cur.execute("Delete from sentimentresults") # cursor deletes the tweets in the Database if the keyword is changed 
 
         for element in String_text_1: # loop through the joined String and call the clean and polarity function
 
             cleaning_tweet = cleanText(element)
             score_polarity = get_polarity(cleaning_tweet)
-            cur.execute("INSERT INTO sentimentresults (orginaltweet,sentiment)"
+            cur.execute("INSERT INTO sentimentresults (orginaltweet,sentiment)" # upload fetched Tweets into the Database
                         "VALUES(%s, %s)", (cleaning_tweet, score_polarity,))
 
         cur.close() # cursor for the database must be closed
